@@ -6,8 +6,8 @@
     <atom:link href="http://domain/rss.xml" rel="self" type="application/rss+xml" />
     <description></description>
     <language>en-au</language>
-    <pubDate>di, 29 dec 2015 13:39:43 %z</pubDate>
-    <lastBuildDate>di, 29 dec 2015 13:39:43 %z</lastBuildDate>
+    <pubDate>di, 29 dec 2015 13:27:08 %z</pubDate>
+    <lastBuildDate>di, 29 dec 2015 13:27:08 %z</lastBuildDate>
 
     
     <item>
@@ -17,8 +17,7 @@
       <author>Author</author>
       <guid>http://domain/2015/12/19/myfirstpost.html</guid>
       <description>&lt;h2&gt;Hello world...&lt;/h2&gt;
-&lt;p&gt;This is my first post on the site!&lt;/p&gt;
-</description>
+&lt;p&gt;This is my first post on the site!&lt;/p&gt;</description>
     </item>
     
     <item>
@@ -28,8 +27,7 @@
       <author>Author</author>
       <guid>http://domain/2015/12/19/testcase.html</guid>
       <description>&lt;h2&gt;Hi...&lt;/h2&gt;
-&lt;p&gt;This is my first test-post on the site!&lt;/p&gt;
-</description>
+&lt;p&gt;This is my first test-post on the site!&lt;/p&gt;</description>
     </item>
     
 

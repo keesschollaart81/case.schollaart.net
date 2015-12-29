@@ -2,7 +2,7 @@
 layout: post
 title: "My First Post"
 author: "Author"
-comments: true
+comments: false
 ---
 
 ## Hello world...
