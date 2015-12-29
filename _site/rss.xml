@@ -6,30 +6,19 @@
     <atom:link href="http://domain/rss.xml" rel="self" type="application/rss+xml" />
     <description></description>
     <language>en-au</language>
-    <pubDate>di, 29 dec 2015 14:10:48 %z</pubDate>
-    <lastBuildDate>di, 29 dec 2015 14:10:48 %z</lastBuildDate>
+    <pubDate>{{ site.time | date: "%a, %d %b %Y %H:%M:%S %z" }}</pubDate>
+    <lastBuildDate>{{ site.time | date: "%a, %d %b %Y %H:%M:%S %z" }}</lastBuildDate>
 
-    
+    {% for post in site.posts %}
     <item>
-      <title>My First Post</title>
-      <link>http://domain/2015/12/19/myfirstpost.html</link>
-      <pubDate>za, 19 dec 2015 00:00:00 %z</pubDate>
+      <title>{{ post.title | xml_escape }}</title>
+      <link>http://domain{{ post.url }}</link>
+      <pubDate>{{ post.date | date: "%a, %d %b %Y %H:%M:%S %z" }}</pubDate>
       <author>Author</author>
-      <guid>http://domain/2015/12/19/myfirstpost.html</guid>
-      <description>&lt;h2&gt;Hello world...&lt;/h2&gt;
-&lt;p&gt;This is my first post on the site!&lt;/p&gt;</description>
+      <guid>http://domain{{ post.url }}</guid>
+      <description>{{ post.content | xml_escape }}</description>
     </item>
-    
-    <item>
-      <title>Test Post</title>
-      <link>http://domain/2015/12/19/testcase.html</link>
-      <pubDate>za, 19 dec 2015 00:00:00 %z</pubDate>
-      <author>Author</author>
-      <guid>http://domain/2015/12/19/testcase.html</guid>
-      <description>&lt;h2&gt;Hi...&lt;/h2&gt;
-&lt;p&gt;This is my first test-post on the site!&lt;/p&gt;</description>
-    </item>
-    
+    {% endfor %}
 
   </channel> 
 </rss>

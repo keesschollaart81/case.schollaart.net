@@ -1,1 +1,1 @@
-powershell.exe "./build.ps1"
+powershell.exe -windowstyle hidden "./build.ps1"
