@@ -1,3 +1,2 @@
 lessc "_source\css\style.less" "_source\css\style.css"
-pretzel.exe bake -d _source 
-
+Pretzel\Pretzel.exe bake --destination=..\_site --d=_source
