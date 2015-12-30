@@ -44,5 +44,6 @@
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Target Name="AfterBuild">
     <Exec Command="Pretzel\Pretzel.exe bake --destination=..\_site --d=_source" />
+    <Exec Command="rename index.cshtml index.html" />
   </Target>
 </Project>
