@@ -42,9 +42,11 @@
     <Content Include="Pretzel\Pretzel.exe.config" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
-  <Target Name="AfterBuild">
-    <Exec Command="Pretzel\Pretzel.exe bake --destination=..\_site --d=_source" />
-    <!--<Exec Command="rename '_site\index.cshtml' 'index.html'" />
+  <Target Name="AfterBuild"> 
+   <Message Text="Pretzel build starting..."/>
+   <Exec Command="Pretzel\Pretzel.exe bake --destination=..\_site --d=_source" />
+   <Message Text="Pretzel build finished!"/>
+   <!--<Exec Command="rename '_site\index.cshtml' 'index.html'" />
 	<Move SourceFiles="_site\index.cshtml" DestinationFiles="_site\index.html" />-->
 	</Target>
 </Project>

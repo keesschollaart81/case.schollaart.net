@@ -1,26 +1,14 @@
 @inherits RazorEngine.Templating.TemplateBase<Pretzel.Logic.Templating.Context.PageContext>
-
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">
-@Include("head.cshtml") 
-	<body>
-		<div id="container">
-			<div id="side">
-				<a href="/" id="myface" title="Profile Picture Kees Schollaart" alt="Profile Picture Kees Schollaart">
-					<img src="/img/kees.jpg" alt="Site Name" />
-				</a>
-				<h1 id="myname"><a href="/" >Kees Schollaart</a></h1>
-				<div class="section">
-					<ul>
-						<li><a href="/about.html">about</a></li>
-						<li><a href="/contact.html">contact</a></li>
-						<li><a href="/rss.xml"><img src="/img/25.png" /> feed</a></li>
-					</ul>
-				</div>
-			</div>
-			<div id="content">
-				@Raw(Model.Content)
-			</div>
-		</div>
-	</body>
+@Include("head.cshtml")
+<body>
+    <div id="container">
+        @Include("side.cshtml")
+        <div id="content">
+            @Raw(Model.Content)
+        </div>
+    </div>
+    @Include("footer.cshtml")
+</body>
 </html>

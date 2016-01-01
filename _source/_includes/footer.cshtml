@@ -1,0 +1,8 @@
+@inherits RazorEngine.Templating.TemplateBase<Pretzel.Logic.Templating.Context.PageContext>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/2.1.4/jquery.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-backstretch/2.0.4/jquery.backstretch.min.js"></script>
+<script type="text/javascript">
+        $(document).ready(function () {
+            $.backstretch('@string.Format("{0}", Model.Bag.ContainsKey("BackgroundUrl") ?  Model.Bag["BackgroundUrl"] : "img/back1.jpg")');
+        });
+</script>

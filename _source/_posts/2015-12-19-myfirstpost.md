@@ -1,8 +1,9 @@
 --- 
-layout: post
+layout: layout
 title: "My First Post"
 author: "Author"
 comments: false
+BackgroundUrl: "/img/back2.jpg"
 ---
 
 ## Hello world...

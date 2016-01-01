@@ -13,26 +13,38 @@
 	<link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/normalize/3.0.3/normalize.css" />
 	<link rel="stylesheet" type="text/css" href="/css/style.css" />
 	<link rel="shortcut icon" href="/img/favicon.ico" />
-</head> 
-	<body>
-		<div id="container">
-			<div id="side">
-				<a href="/" id="myface" title="Profile Picture Kees Schollaart" alt="Profile Picture Kees Schollaart">
-					<img src="/img/kees.jpg" alt="Site Name" />
-				</a>
-				<h1 id="myname"><a href="/" >Kees Schollaart</a></h1>
-				<div class="section">
-					<ul>
-						<li><a href="/about.html">about</a></li>
-						<li><a href="/contact.html">contact</a></li>
-						<li><a href="/rss.xml"><img src="/img/25.png" /> feed</a></li>
-					</ul>
-				</div>
-			</div>
-			<div id="content">
-				<h2>Hello world...</h2>
+</head>
+<body>
+    <div id="container">
+        <div id="side">
+    <a href="/" id="myface" title="Profile Picture Kees Schollaart" alt="Profile Picture Kees Schollaart">
+        <img src="/img/kees.jpg" alt="Site Name" />
+    </a>
+    <h1 id="myname">
+        <a href="/">Kees Schollaart</a>
+    </h1>
+    <div id="navigation">
+        <ul>
+            <li><a href="/about.html">about</a></li>
+            <li><a href="/contact.html">contact</a></li>
+            <li><a href="/rss.xml"><img src="/img/25.png" /> feed</a></li>
+        </ul>
+    </div>
+
+    
+
+</div>
+        <div id="content">
+            <h2>Hello world...</h2>
 <p>This is my first post on the site!</p>
-			</div>
-		</div>
-	</body>
+        </div>
+    </div>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/2.1.4/jquery.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-backstretch/2.0.4/jquery.backstretch.min.js"></script>
+<script type="text/javascript">
+        $(document).ready(function () {
+            $.backstretch('/img/back2.jpg');
+        });
+</script>
+</body>
 </html>

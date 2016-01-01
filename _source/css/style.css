@@ -1,31 +1,64 @@
-body {
+﻿body,
+html {
   padding: 0;
   color: black;
+  height: 100%;
 }
 a {
   color: black;
+}
+#container {
+  height: 100%;
+  width: 100%;
+  background-image: url();
 }
 #side {
   position: absolute;
   right: 0;
   top: 0;
   width: 300px;
-  background-color: gray;
+  background-color: #526ca1;
+  border-left: 10px solid #98aace;
   height: 100%;
-  padding: 10px;
+  padding: 0;
 }
 #side #myface {
   margin: auto;
   width: 200px;
   display: block;
+  margin-top: 40px;
 }
 #side #myname {
-  color: green;
+  color: black;
   font-family: 'Slabo 27px', serif;
   text-align: center;
   margin: 10px 0 10px 0;
 }
 #side #myname a {
   text-decoration: none;
-  color: green;
+  color: black;
+}
+#side #navigation ul {
+  list-style: none;
+  padding: 0;
+}
+#side #navigation ul li {
+  display: block;
+  text-align: center;
+  padding: 5px;
+}
+#side #navigation ul li a {
+  text-decoration: none;
+}
+#side hr {
+  margin: 10px 0 10px 0;
+  border: 1px dotted white;
+}
+#content {
+  float: right;
+  margin-right: 310px;
+  width: 1024px;
+  background-color: rgba(216, 224, 240, 0.95);
+  border-right: 10px solid #b6c5e2;
+  height: 100%;
 }

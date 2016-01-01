@@ -2,43 +2,46 @@
 layout: layout
 ---
 @inherits RazorEngine.Templating.TemplateBase<Pretzel.Logic.Templating.Context.PageContext>
+<h1>@Model.Title</h1>
+<h2>@Model.Page.Date.ToString("d MMM, yyyy")</h2>
+<ul>
+    @foreach (var tag in Model.Page.Tags)
+    {
+        <li><a href="/tag/@tag">@tag</a></li>
+    }
+</ul>
 
-<div class="entry-container">
-	<div class='entry'>
-		<h1>@Model.Title</h1>
-		<span class="postdate">@Model.Page.Date.ToString("d MMM, yyyy")
-			@foreach(var tag in Model.Page.Tags)
-			{	
-                <li><a href="/tag/@tag">@tag</a></li>
-			}
-		</span>
-		@Raw(Model.Content)
-	</div>
+@Raw(Model.Content)
+
+
+<div id="page-navigation">
+    <div class="left">
+        @if (Model.Previous != null)
+        {
+            <a href="@Model.Previous.Url" title="Previous Post: @Model.Previous.Title">&larr; @Model.Previous.Title</a>
+        }
+    </div>
+
+    <div class="right">
+        @if (Model.Next != null)
+        {
+            <a href="@Model.Next.Url" title="next Post: @Model.Next.Title">@Model.Next.Title &rarr; </a>
+        }
+    </div>
+    <div class="clear">&nbsp;</div>
 </div>
-<div id="page-navigation"> 
-	<div class="left">@if (Model.Previous != null)
-                      {
-                          <a href="@Model.Previous.Url" title="Previous Post: @Model.Previous.Title">&larr; @Model.Previous.Title</a>
-                      }</div> 
-	<div class="right">@if (Model.Next != null)
-                       {
-                           <a href="@Model.Next.Url" title="next Post: @Model.Next.Title">@Model.Next.Title &rarr; </a>
-                       }</div> 
-	<div class="clear">&nbsp;</div>
-</div> 
-
 
 @if (Model.Comments)
 {
-<div id="disqus_thread"></div>
-<script type="text/javascript">
-     var disqus_shortname = 'case.schollaart.net'; 
-    (function() {
-        var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
-        dsq.src = 'http://' + disqus_shortname + '.disqus.com/embed.js';
-        (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
-    })();
-</script>
-<noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
-<a href="http://disqus.com" class="dsq-brlink">blog comments powered by <span class="logo-disqus">Disqus</span></a>
+    <div id="disqus_thread"></div>
+    <script type="text/javascript">
+        var disqus_shortname = 'case.schollaart.net';
+        (function () {
+            var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+            dsq.src = 'http://' + disqus_shortname + '.disqus.com/embed.js';
+            (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+        })();
+    </script>
+    <noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+    <a href="http://disqus.com" class="dsq-brlink">blog comments powered by <span class="logo-disqus">Disqus</span></a>
 }
