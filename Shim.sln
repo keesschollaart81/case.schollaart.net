@@ -44,6 +44,7 @@ Project("{E24C65DC-7377-472B-9ABA-BC803B73C61A}") = "_source", "_source\", "{A1D
 		Release.AspNetCompiler.FixedNames = "false"
 		Release.AspNetCompiler.Debug = "False"
 		VWDPort = "50529"
+		SlnRelativePath = "_source\"
 	EndProjectSection
 EndProject
 Global
