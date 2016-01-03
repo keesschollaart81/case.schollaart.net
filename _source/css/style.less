@@ -10,8 +10,7 @@ a {
 
 #container {
     height: 100%;
-    width:100%; 
-    background-image:url()
+    width: 100%;
 }
 
 #side {
@@ -68,9 +67,58 @@ a {
 
 #content {
     float: right;
-    margin-right: 310px;
+    margin-right: 300px;
     width: 1024px;
-    background-color: rgba(216, 224, 240, 0.95);
+    background-color: rgba(216, 224, 240, 0.85);
     border-right: 10px solid #b6c5e2;
     height: 100%;
+    padding: 25px 20px 20px 20px;
+
+    #homebutton {
+        position: absolute;
+        background-color: rgba(216, 224, 240, 0.85);
+        padding: 10px;
+        text-align: center;
+        margin-left: -80px;
+        margin-top: -5px;
+        width: 40px;
+        height: 40px;
+
+        a {
+            span {
+                font-size: 18px;
+                color: gray;
+            }
+
+            &:hover span {
+                color: black;
+            }
+        }
+    }
+    /*#breadcrump {
+        color: gray;
+        margin-bottom: 10px;
+
+        .glyphicon {
+            font-size: 12px;
+        }
+
+        #currentpage a, #archive a { 
+            color: gray;
+            text-transform: uppercase;
+            font-family: 'Slabo 13px', serif;
+        }
+    }*/
+    h2 {
+        padding: 0;
+        margin: 0 0 0 0;
+        color: black;
+        font-family: 'Slabo 27px', serif;
+    }
+
+    .subtitle {
+        margin: 0 0 30px 0;
+        color: gray;
+        font-family: 'Slabo 13px', serif;
+    }
 }

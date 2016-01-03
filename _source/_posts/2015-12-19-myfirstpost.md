@@ -1,11 +1,11 @@
 --- 
-layout: layout
+layout: post
 title: "My First Post"
-author: "Author"
-comments: false
+author: "Author" 
 BackgroundUrl: "/img/back2.jpg"
+comments: true
 ---
 
-## Hello world...
+Zomaar
 
 This is my first post on the site!

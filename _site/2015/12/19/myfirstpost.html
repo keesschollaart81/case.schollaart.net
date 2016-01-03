@@ -1,21 +1,22 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
-	<meta content="en-au" http-equiv="Content-Language" />
-	<meta content="text/html; charset=utf-8" http-equiv="Content-Type" />
-	<link href="/rss.xml" type="application/rss+xml" rel="alternate" title="Blog Feed" />
-	<link href="/atom.xml" type="application/atom+xml" rel="alternate" title="Blog Feed" />
-	<link href='https://fonts.googleapis.com/css?family=Slabo+27px' rel='stylesheet' type='text/css'>
-
-	<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
+    <meta content="en-au" http-equiv="Content-Language" />
+    <meta content="text/html; charset=utf-8" http-equiv="Content-Type" />
+    <link href="/rss.xml" type="application/rss+xml" rel="alternate" title="Blog Feed" />
+    <link href="/atom.xml" type="application/atom+xml" rel="alternate" title="Blog Feed" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
     <title>My First Post</title>
-	
-	<link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/normalize/3.0.3/normalize.css" />
-	<link rel="stylesheet" type="text/css" href="/css/style.css" />
-	<link rel="shortcut icon" href="/img/favicon.ico" />
+
+    <link rel="stylesheet" type="text/css" href="https://fonts.googleapis.com/css?family=Slabo+13px|Slabo+27px"/>
+    <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/normalize/3.0.3/normalize.css" />
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" integrity="sha384-1q8mTJOASx8j1Au+a5WDVnPi2lkFfwwEAa8hDDdjZlpLegxhjVME1fgjWPGmkzs7" crossorigin="anonymous" />
+    <link rel="stylesheet" type="text/css" href="/css/style.css" />
+    <link rel="shortcut icon" href="/img/favicon.ico" />
 </head>
 <body>
     <div id="container">
+
         <div id="side">
     <a href="/" id="myface" title="Profile Picture Kees Schollaart" alt="Profile Picture Kees Schollaart">
         <img src="/img/kees.jpg" alt="Site Name" />
@@ -34,17 +35,62 @@
     
 
 </div>
+
         <div id="content">
-            <h2>Hello world...</h2>
+                <div id="homebutton">
+                    <a href="/"><span class="glyphicon glyphicon-home"></span></a>
+                </div>
+            
+            
+<h2>My First Post</h2>
+<div class="subtitle">19 dec, 2015</div>
+
+
+<p>Zomaar</p>
 <p>This is my first post on the site!</p>
+
+<ul>
+</ul>
+
+<div id="page-navigation">
+    <div class="left">
+            <a href="/2015/12/19/testcase.html" title="Previous Post: Test Post">&larr; Test Post</a>
+    </div>
+
+    <div class="right">
+    </div>
+    <div class="clear">&nbsp;</div>
+</div>
+    <div id="disqus_thread"></div>
+    <script>
+
+        var disqus_developer = 1;
+
+        var disqus_config = function () {
+            this.page.url = '/2015/12/19/myfirstpost.html';
+            this.page.identifier = 'My First Post';
+        };
+
+        (function () { // DON'T EDIT BELOW THIS LINE
+            var d = document, s = d.createElement('script');
+
+            s.src = '//caseschollaartnet.disqus.com/embed.js';
+
+            s.setAttribute('data-timestamp', +new Date());
+            (d.head || d.body).appendChild(s);
+        })();
+    </script>
+
+
         </div>
     </div>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/2.1.4/jquery.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-backstretch/2.0.4/jquery.backstretch.min.js"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js" integrity="sha384-0mSbJDEHialfmuBBQP6A4Qrprq5OVfW37PRR3j5ELqxss1yVqOtnepnHVP9aJ7xS" crossorigin="anonymous"></script>
 <script type="text/javascript">
-        $(document).ready(function () {
-            $.backstretch('/img/back2.jpg');
-        });
+    $(document).ready(function () {
+        $.backstretch('/img/back2.jpg');
+    });
 </script>
 </body>
 </html>
