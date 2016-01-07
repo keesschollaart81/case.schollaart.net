@@ -9,12 +9,54 @@ a {
 }
 #container {
   height: 100%;
-  width: 100%;
+}
+@media all and (min-width: 1324px) {
+  body #container {
+    height: 100%;
+    width: 1324px;
+    float: right;
+  }
+  body #content {
+    float: right;
+    width: 1024px;
+    margin-right: 0;
+  }
+}
+@media all and (max-width: 800px) {
+  body #side {
+    float: none;
+    height: auto;
+    width: auto;
+    border-left: 0;
+  }
+  body #side #myface {
+    display: none;
+  }
+  body #side #myname {
+    margin: 0;
+    padding: 10px;
+    text-align: left;
+  }
+  body #side #navigation ul {
+    height: 50px;
+    padding: 0;
+    margin: 0;
+  }
+  body #side #navigation ul li {
+    height: 50px;
+  }
+  body #side #navigation ul li a i {
+    font-size: 18px;
+  }
+  body #content {
+    margin-right: 0;
+    border-right: 0;
+    padding: 25px 20px 20px 20px;
+    height: auto;
+  }
 }
 #side {
-  position: absolute;
-  right: 0;
-  top: 0;
+  float: right;
   width: 300px;
   background-color: #526ca1;
   border-left: 10px solid #98aace;
@@ -39,24 +81,32 @@ a {
 }
 #side #navigation ul {
   list-style: none;
-  padding: 0;
+  padding: 20px 70px 0 70px;
 }
 #side #navigation ul li {
   display: block;
   text-align: center;
   padding: 5px;
+  float: left;
+  width: 70px;
+  height: 60px;
 }
 #side #navigation ul li a {
   text-decoration: none;
+  color: #b6c5e2;
+}
+#side #navigation ul li a i {
+  font-size: 22px;
+}
+#side #navigation ul li a:hover {
+  color: black;
 }
 #side hr {
   margin: 10px 0 10px 0;
   border: 1px dotted white;
 }
 #content {
-  float: right;
   margin-right: 300px;
-  width: 1024px;
   background-color: rgba(216, 224, 240, 0.85);
   border-right: 10px solid #b6c5e2;
   height: 100%;
