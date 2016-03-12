@@ -1,13 +1,13 @@
 ﻿--- 
 layout: post
-title: "Using Office 365 Migration Api using C♯"
+title: "Using Office 365 Migration Api using C#"
 author: "Kees Schollaart" 
 BackgroundUrl: "/img/migration.jpg"
 comments: true 
 --- 
 
 This blogpost describes how to use the Office 365 Migration Api using custom code. 
-The Office365 Migration Api enables you to upload lots of documents into SharePoint online withoud being throttled.
+The Office365 Migration Api enables you to upload lots of documents into SharePoint Online withoud being throttled.
 
 <h2>What is the Migration Api?</h2>
 This blogpost assumes that you know what the Migration Api is and when to use it. 
@@ -16,7 +16,7 @@ Steven Pogrebivsky has written an [blogpost](http://www.cmswire.com/cms/informat
 
 Also Benjamin Niaulin of Share Gate has written an [blogpost](http://en.share-gate.com/blog/how-to-use-office-365-migration-api), off course promoting their software which can help you with your migration.
 
-##The Microsoft PowerShell Scripts
+<h2>The Microsoft PowerShell Scripts</h2>
 Microsoft provides some PowerShell cmdlets to help you migrate data using the Migration Api. Using the [SharePoint Online Management Shell Windows PowerShell environment](https://technet.microsoft.com/library/fp161372.aspx) you can use [a set of Migration Api related operations](https://technet.microsoft.com/library/mt203955.aspx). 
   
 What this cmdlets basically do, is:

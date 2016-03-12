@@ -5,33 +5,19 @@ Homebutton: false
 ---
 @model Pretzel.Logic.Templating.Context.PageContext
 
-@{
-    var numberPosts = 5;
-}
-@for (var i = 0; i < numberPosts && i < Model.Site.Posts.Count; i++)
-{
-    var post = Model.Site.Posts[i];
+<h1>Blog of Kees Schollaart</h1>
+<div class="subtitle">http://case.schollaart.net/</div>
+<p>
+    Hi! I'd love to code C# and thats what I blog about!<br /><br />
 
-    <h2><a href="@post.Url">@post.Title</a></h2>
-    <div class="subtitle">@post.Date.ToString("d MMM, yyyy")</div>
+    Recent posts:
+</p>
 
-    @Raw(post.Content)
-
-    if (i < (Model.Site.Posts.Count-1))
+<ul class="posts">
+    @foreach (var post in Model.Site.Posts)
     {
-        <hr/>
+        <li>
+             <a href="@post.Url">@post.Title</a> <span class="postdate">@post.Date.ToString("d MMM, yyyy")</span>
+        </li>
     }
-}
-
-@if (Model.Site.Posts.Count > numberPosts)
-            {
-    <h1>Older posts</h1>
-    <ul class="olderposts">
-        @foreach (var post in Model.Site.Posts.Skip(numberPosts))
-        {
-            <li>
-                <span class="olderpostdate">@post.Date.ToString("d m")</span> <a href="@post.Url">@post.Title</a>
-            </li>
-        }
-    </ul>
-}
+</ul>

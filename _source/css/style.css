@@ -19,7 +19,6 @@ a {
   body #content {
     float: right;
     width: 1024px;
-    margin-right: 0;
   }
 }
 @media all and (max-width: 800px) {
@@ -28,6 +27,7 @@ a {
     height: auto;
     width: auto;
     border-left: 0;
+    position: relative;
   }
   body #side #myface {
     display: none;
@@ -54,6 +54,12 @@ a {
     padding: 25px 20px 20px 20px;
     height: auto;
   }
+  body #content h2 {
+    margin-left: 0;
+  }
+  body #content h2::before {
+    display: none;
+  }
 }
 #side {
   float: right;
@@ -61,6 +67,8 @@ a {
   background-color: #526ca1;
   border-left: 10px solid #98aace;
   height: 100%;
+  position: fixed;
+  right: 0;
   padding: 0;
 }
 #side #myface {
@@ -109,9 +117,8 @@ a {
   margin-right: 300px;
   background-color: rgba(216, 224, 240, 0.85);
   border-right: 10px solid #b6c5e2;
-  height: 100%;
+  min-height: 100%;
   padding: 25px 20px 20px 20px;
-  overflow-x: auto;
   /*#breadcrump {
         color: gray;
         margin-bottom: 10px;
@@ -144,14 +151,32 @@ a {
 #content #homebutton a:hover span {
   color: black;
 }
+#content h1 {
+  padding: 0;
+  margin: 20px 0 0 0;
+  color: black;
+  font-family: 'Slabo 13px', serif;
+  font-size: 28px;
+}
 #content h2 {
   padding: 0;
-  margin: 0 0 0 0;
+  margin: 20px 0 0 0;
   color: black;
   font-family: 'Slabo 27px', serif;
+  font-size: 20px;
+  margin-left: -27px;
+}
+#content h2::before {
+  content: "♦";
+  padding-right: 15px;
+  color: black;
+  font-size: 24px;
 }
 #content .subtitle {
   margin: 0 0 30px 0;
   color: gray;
   font-family: 'Slabo 13px', serif;
+}
+.posts {
+  padding: 0px;
 }

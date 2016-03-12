@@ -1,4 +1,4 @@
-body, html {
+﻿body, html {
     padding: 0;
     color: black;
     height: 100%;
@@ -23,7 +23,6 @@ a {
         #content {
             float: right;
             width: 1024px;
-            margin-right: 0;
         }
     }
 }
@@ -35,6 +34,7 @@ a {
             height: auto;
             width: auto;
             border-left: 0;
+            position: relative;
 
             #myface {
                 display: none;
@@ -68,6 +68,14 @@ a {
             border-right: 0;
             padding: 25px 20px 20px 20px;
             height: auto;
+
+            h2 {
+                margin-left: 0;
+
+                &::before {
+                    display: none;
+                }
+            }
         }
     }
 }
@@ -78,6 +86,8 @@ a {
     background-color: #526ca1;
     border-left: 10px solid #98aace;
     height: 100%;
+    position: fixed;
+    right: 0;
     padding: 0;
 
     #myface {
@@ -138,9 +148,8 @@ a {
     margin-right: 300px;
     background-color: rgba(216, 224, 240, 0.85);
     border-right: 10px solid #b6c5e2;
-    height: 100%;
+    min-height: 100%;
     padding: 25px 20px 20px 20px;
-    overflow-x:auto;
 
     #homebutton {
         position: absolute;
@@ -177,11 +186,28 @@ a {
             font-family: 'Slabo 13px', serif;
         }
     }*/
+    h1 {
+        padding: 0;
+        margin: 20px 0 0 0;
+        color: black;
+        font-family: 'Slabo 13px', serif;
+        font-size: 28px;
+    }
+
     h2 {
         padding: 0;
-        margin: 0 0 0 0;
+        margin: 20px 0 0 0;
         color: black;
         font-family: 'Slabo 27px', serif;
+        font-size: 20px;
+        margin-left: -27px;
+
+        &::before {
+            content: "♦";
+            padding-right: 15px;
+            color: black;
+            font-size: 24px;
+        }
     }
 
     .subtitle {
@@ -189,4 +215,9 @@ a {
         color: gray;
         font-family: 'Slabo 13px', serif;
     }
+}
+
+
+.posts {
+    padding: 0px;
 }

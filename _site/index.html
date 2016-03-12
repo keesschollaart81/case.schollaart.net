@@ -41,87 +41,18 @@
 
         <div id="content">
             
-                <h2><a href="/2016/03/10/office365-migration-using-c-sharp.html">Using Office 365 Migration Api using C♯</a></h2>
-    <div class="subtitle">10 mrt, 2016</div>
-<p>This blogpost describes how to use the Office 365 Migration Api using custom code.
-The Office365 Migration Api enables you to upload lots of documents into SharePoint online withoud being throttled.</p>
-<p><h2>What is the Migration Api?</h2>
-This blogpost assumes that you know what the Migration Api is and when to use it.</p>
-<p>Steven Pogrebivsky has written an <a href="http://www.cmswire.com/cms/information-management/demystifying-the-new-migration-api-for-sharepoint-029245.php">blogpost</a> on this subject which I recomment to read first.</p>
-<p>Also Benjamin Niaulin of Share Gate has written an <a href="http://en.share-gate.com/blog/how-to-use-office-365-migration-api">blogpost</a>, off course promoting their software which can help you with your migration.</p>
-<p>##The Microsoft PowerShell Scripts
-Microsoft provides some PowerShell cmdlets to help you migrate data using the Migration Api. Using the <a href="https://technet.microsoft.com/library/fp161372.aspx">SharePoint Online Management Shell Windows PowerShell environment</a> you can use <a href="https://technet.microsoft.com/library/mt203955.aspx">a set of Migration Api related operations</a>.</p>
-<p>What this cmdlets basically do, is:</p>
-<ul>
-<li>
-<p>They create a manifest package of your files</p>
-</li>
-<li>
-<p>Upload your files to Azure Storage</p>
-</li>
-<li>
-<p>Use <a href="https://msdn.microsoft.com/EN-US/library/office/microsoft.sharepoint.client.site.createmigrationjob.aspx">Site.CreateMigrationJob()</a> to start the MigrationJon</p>
-</li>
-<li>
-<p>Read the reporting-queue to provide current job-status</p>
-</li>
-</ul>
-<p>This PowerShell scripts are easy to use but do not bring a lot of flexibility. For example:</p>
-<ul>
-<li>
-<p>Impossible to migrate custom metadata</p>
-</li>
-<li>
-<p>Can not (or hardly) be automated</p>
-</li>
-<li>
-<p>Only on source or destination (folder)</p>
-</li>
-<li>
-<p>Reporting on running job is very simple</p>
-</li>
-</ul>
-<p><h2>Undocumented features</h2>
-Some technical parts of this migration process are documented, like <a href="https://msdn.microsoft.com/EN-US/library/office/microsoft.sharepoint.client.site.createmigrationjob.aspx">Site.CreateMigrationJob()</a>.</p>
-<p>Other parts are not (well) documented, for example the structure of the manifest-package and the reporting-queue messageformat.</p>
-<p>There's also no example project on how to do advanced migration scenario's and how to use the Api's yourself.</p>
-<p><h2>Migration using C#</h2>
-All the things the PowerShell scripts do, we can do ourselfs using .NET. I created a <a href="https://github.com/keesschollaart81/MigrationApiDemo">Proof Of Concept C# Console Application</a> doing:</p>
-<p>1 Create and upload some test-files to Azure Blob Storage</p>
-<p>2 Create a Manifest Package based on this test-files</p>
-<p>3 Upload this Manifest Package to Azure Blob Storage</p>
-<p>4 Start the Migration Job using CSOM</p>
-<p>5 Monitor the Reporting Queue and wait for the job to complete</p>
-<p>6 Persist errors from the queue and download the log-files from the Migration Job</p>
-<p><h2>How to use this code</h2>
-You first need:</p>
-<ul>
-<li>
-<p>A SharePoint Online tenant with credentials having write access to the destination Site/Document Library/Folder</p>
-</li>
-<li>
-<p>An existing Site with an existing Document Library to migrate the files to</p>
-</li>
-<li>
-<p>An acountname and accountkey of at least one Azure Storage account, for one migration job, we need two Blob Containers and one Queue. They can be in the same Storage Account but that is not required.</p>
-</li>
-</ul>
-<p>After setting this variables in the appsettings-section of the <code>App.config</code> file you're good to go, just run the application.
-After running this application succesfully two test-files will be uploaded in the configured SharePoint environment. Log files will be stored in the application folder using log4net's FileAppender.</p>
-<p>This application is just to show how to migrate files using .NET with a minimal set of code. <strong>It cannot be used as-is in real world scenario's</strong>!</p>
-<p>When you want to use this code, the first thing to change will be the origin of the files from in-memory-generation to (for example) a folder.</p>
-<p><h2>More information</h2>
-Feel free to use this code for own/commercial use. For questions or information, contact me!</p>
-<ul>
-<li>
-<p><a href="https://github.com/keesschollaart81/MigrationApiDemo">Migration Api using C#, GitHub</a></p>
-</li>
-<li>
-<p><a href="https://technet.microsoft.com/library/mt203955.aspx">SharePoint Online and OneDrive Migration Content Roadmap</a></p>
-</li>
-<li>
-<p><a href="https://channel9.msdn.com/Events/Ignite/2015/BRK3153">Channel9: Migration to SharePoint Online Best Practices and New API Investments</a></p>
-</li>
+            <h1>Blog of Kees Schollaart</h1>
+<div class="subtitle">http://case.schollaart.net/</div>
+<p>
+    Hi! I'd love to code C# and thats what I blog about!<br /><br />
+
+    Recent posts:
+</p>
+
+<ul class="posts">
+        <li>
+             <a href="/2016/03/10/office365-migration-using-c-sharp.html">Using Office 365 Migration Api using C#</a> <span class="postdate">10 mrt, 2016</span>
+        </li>
 </ul>
 
         </div>
