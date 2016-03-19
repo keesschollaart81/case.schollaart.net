@@ -15,8 +15,8 @@ layout: layout
         var disqus_developer = 1;
 
         var disqus_config = function () {
-            this.page.url = '@Model.Page.Url';
-            this.page.identifier = '@Model.Page.Title';
+            this.page.url = '{{page.url}}';
+            this.page.identifier = '{{page.title}}';
         };
 
         (function () { // DON'T EDIT BELOW THIS LINE
