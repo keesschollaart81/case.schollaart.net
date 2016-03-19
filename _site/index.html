@@ -18,7 +18,7 @@
 <body>
     <div id="container">
 
-        <div id="side">
+		<div id="side">
     <a href="/" id="myface" title="Profile Picture Kees Schollaart" alt="Profile Picture Kees Schollaart">
         <img src="/img/kees.jpg" alt="Site Name" />
     </a>
@@ -31,39 +31,48 @@
             <li><a href="https://nl.linkedin.com/in/keesschollaart" target="_blank"><i class="fa fa-linkedin-square"></i><br />LinkedIn</a></li>
             <li><a href="https://github.com/keesschollaart81" target="_blank"><i class="fa fa-github-square"></i><br />GitHub</a></li>
             <li><a href="http://www.emailmeform.com/builder/form/6cNG0B3bIfEp232ftoKR2zO7" target="_blank"><i class="fa fa-envelope-square"></i><br />contact</a></li>
-            
         </ul>
     </div>
-
-    
-
 </div>
-
+        
         <div id="content">
-            
-            <h1>Blog of Kees Schollaart</h1>
+           
+                <div id="homebutton">
+                    <a href="/"><span class="glyphicon glyphicon-home"></span></a>
+                </div> 
+				
+				<h1>Blog of Kees Schollaart</h1>
 <div class="subtitle">http://case.schollaart.net/</div>
 <p>
-    Hi! I'd love to code C# and thats what I blog about!<br /><br />
+    Hi there! I'd love to code C# and thats what I blog about!<br /><br />
 
     Recent posts:
 </p>
 
 <ul class="posts">
+	
+      <li><span>10 Mar 2016</span> &raquo; <a href="/2016/03/10/office365-migration-using-c-sharp.html">Using Office 365 Migration Api using C#</a></li>
+    
+	
+    <!--@foreach (var post in Model.Site.Posts)
+    {
         <li>
-             <a href="/2016/03/10/office365-migration-using-c-sharp.html">Using Office 365 Migration Api using C#</a> <span class="postdate">10 mrt, 2016</span>
+             <a href="@post.Url">@post.Title</a> <span class="postdate">@post.Date.ToString("d MMM, yyyy")</span>
         </li>
+    }-->
 </ul>
-
+ 
         </div>
     </div>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/2.1.4/jquery.min.js"></script>
+   <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/2.1.4/jquery.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-backstretch/2.0.4/jquery.backstretch.min.js"></script>
 <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js" integrity="sha384-0mSbJDEHialfmuBBQP6A4Qrprq5OVfW37PRR3j5ELqxss1yVqOtnepnHVP9aJ7xS" crossorigin="anonymous"></script>
 <script type="text/javascript">
     $(document).ready(function () {
-        $.backstretch('/img/back1.jpg');
+		
+			$.backstretch('/img/back1.jpg'); 
+		
     });
-</script>
+</script> 
 </body>
 </html>

@@ -1,1 +1,0 @@
-powershell.exe -windowstyle hidden "./build.ps1"

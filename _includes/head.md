@@ -1,11 +1,10 @@
-@inherits RazorEngine.Templating.TemplateBase<Pretzel.Logic.Templating.Context.PageContext>
 <head>
     <meta content="en-au" http-equiv="Content-Language" />
     <meta content="text/html; charset=utf-8" http-equiv="Content-Type" />
     <link href="/rss.xml" type="application/rss+xml" rel="alternate" title="Blog Feed" />
     <link href="/atom.xml" type="application/atom+xml" rel="alternate" title="Blog Feed" />
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
-    <title>@Model.Title</title>
+    <title>{{page.title}}</title>
 
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.5.0/css/font-awesome.min.css" />
     <link rel="stylesheet" type="text/css" href="https://fonts.googleapis.com/css?family=Slabo+13px|Slabo+27px" />
