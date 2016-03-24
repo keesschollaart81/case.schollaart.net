@@ -177,6 +177,11 @@ a {
     color: gray;
     font-family: 'Slabo 13px', serif;
 }
+
+#content a { 
+    color: #00047D; 
+	text-decoration: underline;
+}
 .posts {
     padding: 0px;
 }
