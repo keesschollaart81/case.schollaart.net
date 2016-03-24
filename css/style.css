@@ -185,28 +185,31 @@ a {
 .posts {
     padding: 0px;
 }
-.posts .post {
+#content .posts .post {
     background-color: rgba(216, 224, 240, 0.85);
 	margin: 15px -5px -5px -5px;
 	padding:5px;
 	border-radius:5px;
+	text-decoration:none;
 	
 }
-.posts .post .contentTitle{
+#content .posts .post a.contentTitle{
     font-family: 'Slabo 27px', serif;
     font-size: 20px;
     color: black;
 	margin: 10px 0px 0px 0px;
 	display: block;
+	text-decoration:none;
 }
 
-.contentDate {
+#content .posts .post .contentDate {
 	font-family: 'Slabo 13px', serif;
 	color:gray;
 	font-size:13px;
 	font-style: italic;
 } 
-.readMore{
+#content .posts .post .readMore{
 	color:black;
+	text-decoration:none; 
 	
 }
