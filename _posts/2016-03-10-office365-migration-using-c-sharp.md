@@ -6,8 +6,10 @@ backgroundUrl: /img/migration.jpg
 comments: true 
 ---  
 
-This blogpost describes how to use the Office 365 Migration Api using custom code. 
+This blogpost describes how to use the Office 365 Migration Api using your own C# code. 
+
 The Office365 Migration Api enables you to upload lots of documents into SharePoint Online withoud being throttled.
+<!--more-->
 
 ## What is the Migration Api?
 

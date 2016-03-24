@@ -49,18 +49,24 @@
     Recent posts:
 </p>
 
-<ul class="posts">
-	
-      <li><span>10 Mar 2016</span> &raquo; <a href="/2016/03/10/office365-migration-using-c-sharp.html">Using Office 365 Migration Api using C#</a></li>
-    
-	
-    <!--@foreach (var post in Model.Site.Posts)
-    {
-        <li>
-             <a href="@post.Url">@post.Title</a> <span class="postdate">@post.Date.ToString("d MMM, yyyy")</span>
-        </li>
-    }-->
-</ul>
+<div class="posts"> 
+	 
+		<div class="post">
+			<a class="contentTitle" href="/2016/03/10/office365-migration-using-c-sharp.html" title="Using Office 365 Migration Api using C#">Using Office 365 Migration Api using C#</a>
+			<div class="contentDate">March 10, 2016</div>
+			<div class="content">
+				<p>This blogpost describes how to use the Office 365 Migration Api using your own C# code.</p>
+
+<p>The Office365 Migration Api enables you to upload lots of documents into SharePoint Online withoud being throttled.</p>
+
+
+				
+				<a href="/2016/03/10/office365-migration-using-c-sharp.html" class="readMore"><span class="glyphicon glyphicon-chevron-right"></span> Read more</a>
+			
+			</div>
+		</div> 
+	 
+</div>
  
         </div>
     </div>
@@ -68,11 +74,20 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-backstretch/2.0.4/jquery.backstretch.min.js"></script>
 <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js" integrity="sha384-0mSbJDEHialfmuBBQP6A4Qrprq5OVfW37PRR3j5ELqxss1yVqOtnepnHVP9aJ7xS" crossorigin="anonymous"></script>
 <script type="text/javascript">
-    $(document).ready(function () {
+  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+  })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+  ga('create', 'UA-58834-13', 'auto');
+  ga('send', 'pageview');
+
+  $(document).ready(function () {
 		
 			$.backstretch('/img/back1.jpg'); 
 		
-    });
+    }); 
+
 </script> 
 </body>
 </html>

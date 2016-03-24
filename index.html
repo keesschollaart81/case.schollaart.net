@@ -1,0 +1,28 @@
+---
+layout : layout
+title : case.schollaart.net
+Homebutton: false
+--- 
+
+<h1>Blog of Kees Schollaart</h1>
+<div class="subtitle">http://case.schollaart.net/</div>
+<p>
+    Hi there! I'd love to code C# and thats what I blog about!<br /><br />
+
+    Recent posts:
+</p>
+
+<div class="posts"> 
+	{% for post in paginator.posts %} 
+		<div class="post">
+			<a class="contentTitle" href="{{ post.url }}" title="{{ post.title }}">{{ post.title }}</a>
+			<div class="contentDate">{{ post.date | date: "%B %d, %Y" }}</div>
+			<div class="content">
+				{{ post.excerpt }}
+				{% if post.content contains site.excerpt_separator %}
+				<a href="{{ post.url | prepend: site.baseurl }}" class="readMore"><span class="glyphicon glyphicon-chevron-right"></span> Read more</a>
+			{% endif %}
+			</div>
+		</div> 
+	{% endfor %} 
+</div>
