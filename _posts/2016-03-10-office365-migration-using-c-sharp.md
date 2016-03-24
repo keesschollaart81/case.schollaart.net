@@ -13,7 +13,7 @@ The Office365 Migration Api enables you to upload lots of documents into SharePo
 
 ## What is the Migration Api?
 
-This blogpost assumes that you know what the Migration Api is and when to use it. 
+I assume that you know what the Migration Api is and when to use it. 
 
 Steven Pogrebivsky has written an [blogpost](http://www.cmswire.com/cms/information-management/demystifying-the-new-migration-api-for-sharepoint-029245.php) on this subject which I recomment to read first.
 
@@ -24,7 +24,7 @@ Microsoft provides some PowerShell cmdlets to help you migrate data using the Mi
   
 What this cmdlets basically do, is:
 
-- They create a manifest package of your files 
+- They create a manifest package containing xml files with references to your files 
 
 - Upload your files to Azure Storage
 
@@ -39,9 +39,9 @@ This PowerShell scripts are easy to use but do not bring a lot of flexibility. F
 
 - Can not (or hardly) be automated 
 
-- Only on source or destination (folder)
+- Only one source or destination (folder)
 
-- Reporting on running job is very simple
+- Reporting on running job is very basic
 
 ## Undocumented features
 Some technical parts of this migration process are documented, like [Site.CreateMigrationJob()](https://msdn.microsoft.com/EN-US/library/office/microsoft.sharepoint.client.site.createmigrationjob.aspx).
@@ -50,7 +50,7 @@ Other parts are not (well) documented, for example the structure of the manifest
 
 There's also no example project on how to do advanced migration scenario's and how to use the Api's yourself.
 
-## Migration using C#
+## Migration using C\#
 All the things the PowerShell scripts do, we can do ourselfs using .NET. I created a [Proof Of Concept C# Console Application](https://github.com/keesschollaart81/MigrationApiDemo) doing:
 
 1 Create and upload some test-files to Azure Blob Storage
@@ -74,17 +74,17 @@ You first need:
 
 - An acountname and accountkey of at least one Azure Storage account, for one migration job, we need two Blob Containers and one Queue. They can be in the same Storage Account but that is not required.
 
-After setting this variables in the appsettings-section of the ```App.config``` file you're good to go, just run the application. 
-After running this application succesfully two test-files will be uploaded in the configured SharePoint environment. Log files will be stored in the application folder using log4net's FileAppender.
+After setting this variables in the appsettings-section of the App.config file you're good to go, just run the application. 
+After running this application succesfully, two test-files will be uploaded in the configured SharePoint environment. Log files will be stored in the application folder using log4net's FileAppender.
 
-This application is just to show how to migrate files using .NET with a minimal set of code. **It cannot be used as-is in real world scenario's**! 
+This application is just to show  you how to migrate files using .NET with a minimal set of code. **It cannot be used as-is in real world scenario's**! 
 
 When you want to use this code, the first thing to change will be the origin of the files from in-memory-generation to (for example) a folder.
 
 ## More information
 Feel free to use this code for own/commercial use. For questions or information, contact me! 
 
-- [Migration Api using C#, GitHub](https://github.com/keesschollaart81/MigrationApiDemo)
+- [Migration Api using C#, Example code @ GitHub](https://github.com/keesschollaart81/MigrationApiDemo)
 
 - [SharePoint Online and OneDrive Migration Content Roadmap](https://technet.microsoft.com/library/mt203955.aspx)
 

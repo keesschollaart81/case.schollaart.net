@@ -51,7 +51,7 @@
 
 <h2 id="what-is-the-migration-api">What is the Migration Api?</h2>
 
-<p>This blogpost assumes that you know what the Migration Api is and when to use it.</p>
+<p>I assume that you know what the Migration Api is and when to use it.</p>
 
 <p>Steven Pogrebivsky has written an <a href="http://www.cmswire.com/cms/information-management/demystifying-the-new-migration-api-for-sharepoint-029245.php">blogpost</a> on this subject which I recomment to read first.</p>
 
@@ -64,7 +64,7 @@
 
 <ul>
   <li>
-    <p>They create a manifest package of your files</p>
+    <p>They create a manifest package containing xml files with references to your files</p>
   </li>
   <li>
     <p>Upload your files to Azure Storage</p>
@@ -87,10 +87,10 @@
     <p>Can not (or hardly) be automated</p>
   </li>
   <li>
-    <p>Only on source or destination (folder)</p>
+    <p>Only one source or destination (folder)</p>
   </li>
   <li>
-    <p>Reporting on running job is very simple</p>
+    <p>Reporting on running job is very basic</p>
   </li>
 </ul>
 
@@ -101,7 +101,7 @@
 
 <p>There’s also no example project on how to do advanced migration scenario’s and how to use the Api’s yourself.</p>
 
-<h2 id="migration-using-c">Migration using C</h2>
+<h2 id="migration-using-c">Migration using C#</h2>
 <p>All the things the PowerShell scripts do, we can do ourselfs using .NET. I created a <a href="https://github.com/keesschollaart81/MigrationApiDemo">Proof Of Concept C# Console Application</a> doing:</p>
 
 <p>1 Create and upload some test-files to Azure Blob Storage</p>
@@ -131,10 +131,10 @@
   </li>
 </ul>
 
-<p>After setting this variables in the appsettings-section of the <code class="highlighter-rouge">App.config</code> file you’re good to go, just run the application. 
-After running this application succesfully two test-files will be uploaded in the configured SharePoint environment. Log files will be stored in the application folder using log4net’s FileAppender.</p>
+<p>After setting this variables in the appsettings-section of the App.config file you’re good to go, just run the application. 
+After running this application succesfully, two test-files will be uploaded in the configured SharePoint environment. Log files will be stored in the application folder using log4net’s FileAppender.</p>
 
-<p>This application is just to show how to migrate files using .NET with a minimal set of code. <strong>It cannot be used as-is in real world scenario’s</strong>!</p>
+<p>This application is just to show  you how to migrate files using .NET with a minimal set of code. <strong>It cannot be used as-is in real world scenario’s</strong>!</p>
 
 <p>When you want to use this code, the first thing to change will be the origin of the files from in-memory-generation to (for example) a folder.</p>
 
@@ -143,7 +143,7 @@ After running this application succesfully two test-files will be uploaded in th
 
 <ul>
   <li>
-    <p><a href="https://github.com/keesschollaart81/MigrationApiDemo">Migration Api using C#, GitHub</a></p>
+    <p><a href="https://github.com/keesschollaart81/MigrationApiDemo">Migration Api using C#, Example code @ GitHub</a></p>
   </li>
   <li>
     <p><a href="https://technet.microsoft.com/library/mt203955.aspx">SharePoint Online and OneDrive Migration Content Roadmap</a></p>
