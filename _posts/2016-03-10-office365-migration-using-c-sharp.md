@@ -1,6 +1,6 @@
 --- 
 layout: post
-title: "Using Office 365 Migration Api using C#"
+title: "Office 365 Migration Api using C#"
 author: "Kees Schollaart" 
 backgroundUrl: /img/migration.jpg
 comments: true 
