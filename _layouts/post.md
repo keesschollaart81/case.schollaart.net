@@ -5,7 +5,7 @@ layout: layout
 <div class="subtitle">{{ page.date | date_to_string }}</div>
 
 {{ content }}
-
+ 
 
   {% if page.comments != null && page.comments == true %}
 
@@ -14,8 +14,7 @@ layout: layout
 
         var disqus_developer = 1;
 
-        var disqus_config = function () {
-            this.page.url = '{{page.url}}';
+        var disqus_config = function () { 
             this.page.identifier = '{{page.title}}';
         };
 
