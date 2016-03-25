@@ -59,7 +59,7 @@ All the things the PowerShell scripts do, we can do ourselfs using .NET. I creat
 
 Lets check some code, the 4 steps refer to the image in the first paragraph:
 
-``` cs
+~~~ cs
 class Program
 {
 	static void Main(string[] args)
@@ -81,11 +81,11 @@ class Program
 		Console.ReadLine();
 	}
 }
-```
+~~~
 
 The test files are provisioned to Azure but are generated in-memory:
 
-``` cs
+~~~ cs
 public  ICollection<SourceFile> ProvisionAndGetFiles()
 {
 	var testfiles = new[]
@@ -115,13 +115,13 @@ public  ICollection<SourceFile> ProvisionAndGetFiles()
 
 	return testfiles;
 }
-```
+~~~
 
 In a real life scenario this needs to be replaced with code getting the files from your source location, a network-drive, a legacy system or ...? For now it's important to know that the source-files can he loaded from any source but you have to write your own reader.
 
 Now we need to create a manifest-package
 
-``` cs
+~~~ cs
 public IEnumerable<MigrationPackageFile> GetManifestPackageFiles(IEnumerable<SourceFile> sourceFiles)
 {
 	Log.Debug("Generating manifest package");
@@ -137,13 +137,13 @@ public IEnumerable<MigrationPackageFile> GetManifestPackageFiles(IEnumerable<Sou
 		GetViewFormsListXml()
 	};
 }
-```
+~~~
 
 The package contains 8 XML files all of them are very small/static beside the 'Manifest.xml' file, this file contains all the references to our source files.
 
 Now that we have to Azure Blob Containers we can start the Migration Job:
 
-``` cs
+~~~ cs
 /// <returns>Job Id</returns>
 public Guid StartMigrationJob()
 {
@@ -161,11 +161,11 @@ public Guid StartMigrationJob()
 
 	return _target.StartMigrationJob(sourceFileContainerUrl, manifestContainerUrl, azureQueueReportUrl);
 }
-```
+~~~
 
 Office 365 will start this migration job and report any update (progress, fail of success) to the reporting-queue
 
-``` cs
+~~~ cs
 public async Task MonitorMigrationApiQueue(Guid jobId)
 {
 	while (true)
@@ -206,7 +206,7 @@ public async Task MonitorMigrationApiQueue(Guid jobId)
 		}
 	}
 }
-```
+~~~
   
 ## How to use this code
 You first need:
