@@ -212,4 +212,5 @@ a {
 	color:black;
 	text-decoration:none; 
 	
-}
+}  
+.hljs { min-width:500px; }

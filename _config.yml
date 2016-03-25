@@ -1,4 +1,4 @@
 paginate: 5
 excerpt_separator: <!--more-->
 gems:      ["jekyll-paginate"]  
-encoding: utf-8
+encoding: utf-8 

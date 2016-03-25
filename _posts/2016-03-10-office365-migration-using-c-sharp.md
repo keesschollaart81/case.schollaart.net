@@ -19,6 +19,10 @@ Steven Pogrebivsky has written an [blogpost](http://www.cmswire.com/cms/informat
 
 Also Benjamin Niaulin of Share Gate has written an [blogpost](http://en.share-gate.com/blog/how-to-use-office-365-migration-api), off course promoting their software which can help you with your migration.
 
+In short, it boils down to the following flow:
+
+<img src="/img/MigrationApiScheme.jpg"/>
+
 ## The Microsoft PowerShell Scripts
 Microsoft provides some PowerShell cmdlets to help you migrate data using the Migration Api. Using the [SharePoint Online Management Shell Windows PowerShell environment](https://technet.microsoft.com/library/fp161372.aspx) you can use [a set of Migration Api related operations](https://technet.microsoft.com/library/mt203955.aspx). 
   
@@ -51,19 +55,157 @@ Other parts are not (well) documented, for example the structure of the manifest
 There's also no example project on how to do advanced migration scenario's and how to use the Api's yourself.
 
 ## Migration using C\#
-All the things the PowerShell scripts do, we can do ourselfs using .NET. I created a [Proof Of Concept C# Console Application](https://github.com/keesschollaart81/MigrationApiDemo) doing:
+All the things the PowerShell scripts do, we can do ourselfs using .NET. I created a [Proof Of Concept C# Console Application](https://github.com/keesschollaart81/MigrationApiDemo) doing.
 
-1 Create and upload some test-files to Azure Blob Storage
+Lets check some code, the 4 steps refer to the image in the first paragraph:
 
-2 Create a Manifest Package based on this test-files
+```csharp
+class Program
+{
+	static void Main(string[] args)
+	{
+		var migrationApiDemo = new MigrationApiDemo();
 
-3 Upload this Manifest Package to Azure Blob Storage
+		// Step 1, Create and upload some test-files to Azure Blob Storage
+		migrationApiDemo.ProvisionTestFiles();
 
-4 Start the Migration Job using CSOM
+		// Step 2, Create and upload Manifest Package to Azure Blob Storage
+		migrationApiDemo.CreateAndUploadMigrationPackage();
 
-5 Monitor the Reporting Queue and wait for the job to complete
+		// Step 3, Start the Migration Job using SharePoint Online Clientside Object Model (CSOM)
+		var jobId = migrationApiDemo.StartMigrationJob();
 
-6 Persist errors from the queue and download the log-files from the Migration Job
+		// Step 4, Monitor the Reporting Queue, persist messages/logs and wait for the job to complete
+		migrationApiDemo.MonitorMigrationApiQueue(jobId).Wait();
+
+		Console.ReadLine();
+	}
+}
+```
+
+The test files are provisioned to Azure but are generated in-memory:
+
+```csharp
+public  ICollection<SourceFile> ProvisionAndGetFiles()
+{
+	var testfiles = new[]
+	{
+		new SourceFile
+		{
+			Filename = "test.txt",
+			LastModified = DateTime.Now,
+			Contents = Encoding.UTF8.GetBytes("Hi, this is a test text-file"),
+			Title = "Title of file 1"
+		},
+		new SourceFile
+		{
+			Filename = "test2.txt",
+			LastModified = DateTime.Now.AddDays(-1),
+			Contents = Encoding.UTF8.GetBytes("Tesfile2"),
+			Title = "Second title"
+		}
+	};
+
+	_log.Debug("Removing all existing files on test blob...");
+	_azureBlob.RemoveAllFiles();
+
+	_log.Debug($"Uploading {testfiles.Length} files on test blob...");
+	foreach (var testfile in testfiles)
+		_azureBlob.UploadFile(testfile.Filename, testfile.Contents);
+
+	return testfiles;
+}
+```
+In a real life scenario this needs to be replaced with code getting the files from your source location, a network-drive, a legacy system or ...? For now it's important to know that the source-files can he loaded from any source but you have to write your own reader.
+
+Now we need to create a manifest-package
+
+```csharp
+public IEnumerable<MigrationPackageFile> GetManifestPackageFiles(IEnumerable<SourceFile> sourceFiles)
+{
+	Log.Debug("Generating manifest package");
+	return = new[]
+	{
+		GetExportSettingsXml(),
+		GetLookupListMapXml(),
+		GetManifestXml(sourceFiles),
+		GetRequirementsXml(),
+		GetRootObjectMapXml(),
+		GetSystemDataXml(),
+		GetUserGroupXml(),
+		GetViewFormsListXml()
+	};
+}
+```
+
+The package contains 8 XML files all of them are very small/static beside the 'Manifest.xml' file, this file contains all the references to our source files.
+
+Now that we have to Azure Blob Containers we can start the Migration Job:
+
+```csharp
+/// <returns>Job Id</returns>
+public Guid StartMigrationJob()
+{
+	var sourceFileContainerUrl = _testDataProvider.GetBlobUri();
+	var manifestContainerUrl = _blobContainingManifestFiles.GetUri(
+		SharedAccessBlobPermissions.Read 
+		| SharedAccessBlobPermissions.Write 
+		| SharedAccessBlobPermissions.List);
+
+	var azureQueueReportUrl = _migrationApiQueue.GetUri(
+		SharedAccessQueuePermissions.Read 
+		| SharedAccessQueuePermissions.Add 
+		| SharedAccessQueuePermissions.Update 
+		| SharedAccessQueuePermissions.ProcessMessages);
+
+	return _target.StartMigrationJob(sourceFileContainerUrl, manifestContainerUrl, azureQueueReportUrl);
+}
+```
+
+Office 365 will start this migration job and report any update (progress, fail of success) to the reporting-queue
+
+```csharp
+public async Task MonitorMigrationApiQueue(Guid jobId)
+{
+	while (true)
+	{
+		var message = await _migrationApiQueue.GetMessageAsync<UpdateMessage>();
+		if (message == null)
+		{
+			await Task.Delay(TimeSpan.FromSeconds(1));
+			continue;
+		}
+
+		switch (message.Event)
+		{
+			case "JobEnd":
+				Log.Info($"Migration Job Ended {message.FilesCreated:0.} files created, {message.TotalErrors:0.} errors.!");
+				DownloadAndPersistLogFiles(jobId); // save log files to disk
+				Console.WriteLine("Press ctrl+c to exit");
+				return;
+			case "JobStart":
+				Log.Info("Migration Job Started!");
+				break;
+			case "JobProgress":
+				Log.Debug($"Migration Job in progress, {message.FilesCreated:0.} files created, {message.TotalErrors:0.} errors.");
+				break;
+			case "JobQueued":
+				Log.Info("Migration Job Queued...");
+				break;
+			case "JobWarning":
+				Log.Warn($"Migration Job warning {message.Message}");
+				break;
+			case "JobError":
+				Log.Error($"Migration Job error {message.Message}");
+				break;
+			default:
+				Log.Warn($"Unknown Job Status: {message.Event}, message {message.Message}");
+				break;
+
+		}
+	}
+}
+```
 
 ## How to use this code
 You first need:
