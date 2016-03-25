@@ -59,7 +59,7 @@ All the things the PowerShell scripts do, we can do ourselfs using .NET. I creat
 
 Lets check some code, the 4 steps refer to the image in the first paragraph:
 
-```csharp
+``` csharp
 class Program
 {
 	static void Main(string[] args)
@@ -85,7 +85,7 @@ class Program
 
 The test files are provisioned to Azure but are generated in-memory:
 
-```csharp
+``` csharp
 public  ICollection<SourceFile> ProvisionAndGetFiles()
 {
 	var testfiles = new[]
@@ -116,11 +116,12 @@ public  ICollection<SourceFile> ProvisionAndGetFiles()
 	return testfiles;
 }
 ```
+
 In a real life scenario this needs to be replaced with code getting the files from your source location, a network-drive, a legacy system or ...? For now it's important to know that the source-files can he loaded from any source but you have to write your own reader.
 
 Now we need to create a manifest-package
 
-```csharp
+``` csharp
 public IEnumerable<MigrationPackageFile> GetManifestPackageFiles(IEnumerable<SourceFile> sourceFiles)
 {
 	Log.Debug("Generating manifest package");
@@ -142,7 +143,7 @@ The package contains 8 XML files all of them are very small/static beside the 'M
 
 Now that we have to Azure Blob Containers we can start the Migration Job:
 
-```csharp
+``` csharp
 /// <returns>Job Id</returns>
 public Guid StartMigrationJob()
 {
@@ -164,7 +165,7 @@ public Guid StartMigrationJob()
 
 Office 365 will start this migration job and report any update (progress, fail of success) to the reporting-queue
 
-```csharp
+``` csharp
 public async Task MonitorMigrationApiQueue(Guid jobId)
 {
 	while (true)
