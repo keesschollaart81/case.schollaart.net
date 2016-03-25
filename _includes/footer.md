@@ -13,9 +13,9 @@
 
   $(document).ready(function () {
 		{% if page.backgroundUrl == null %}
-			$.backstretch('/img/back1.jpg'); 
+			$.backstretch('/img/back1.jpg', { fade: 2000}); 
 		{% else %}
-			$.backstretch('{{page.backgroundUrl}}');
+			$.backstretch('{{page.backgroundUrl}}', { fade: 2000});
 		{% endif %}
     }); 
 	

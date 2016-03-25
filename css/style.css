@@ -4,6 +4,9 @@ html {
     color: black;
     height: 100%;
 }
+body{
+	background-color: #EBEFF7;
+}
 a {
     color: black;
 }
