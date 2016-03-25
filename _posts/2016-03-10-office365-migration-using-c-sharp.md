@@ -54,8 +54,7 @@ Other parts are not (well) documented, for example the structure of the manifest
 
 There's also no example project on how to do advanced migration scenario's and how to use the Api's yourself.
 
-## Migration using C\#
-<<<<<<< HEAD
+## Migration using C\# 
 All the things the PowerShell scripts do, we can do ourselfs using .NET. I created a [Proof Of Concept C# Console Application](https://github.com/keesschollaart81/MigrationApiDemo) doing.
 
 Lets check some code, the 4 steps refer to the image in the first paragraph:
@@ -207,22 +206,7 @@ public async Task MonitorMigrationApiQueue(Guid jobId)
 	}
 }
 ```
-=======
-All the things the PowerShell scripts do, we can do yourself using .NET. I created a [Proof Of Concept C# Console Application](https://github.com/keesschollaart81/MigrationApiDemo) doing:
-
-1 Create and upload some test-files to Azure Blob Storage
-
-2 Create a Manifest Package based on this test-files
-
-3 Upload this Manifest Package to Azure Blob Storage
-
-4 Start the Migration Job using CSOM
-
-5 Monitor the Reporting Queue and wait for the job to complete
-
-6 Persist errors from the queue and download the log-files from the Migration Job
->>>>>>> origin/master
-
+  
 ## How to use this code
 You first need:
 
