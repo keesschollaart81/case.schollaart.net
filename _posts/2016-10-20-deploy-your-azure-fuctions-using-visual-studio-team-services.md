@@ -72,7 +72,7 @@ My Visual Studio solution structure looks like this:
 
  The 'ExampleFunctionApp' in the screenshot above maps to a single FunctionApp (as configured in the ARM Template before). Every subfolder (only 'Timer' in this case) is a function within the FunctionApp: a FunctionApp can contain multiple functions.
 
- Every function consist of at least two files, let start with <b>function.json</b>. This file contains the configuration of the function. In the Azure Portal, this is the 'Integrate' tab when you edit your function, you can see the underlying JSON in the Azyre Portal by clicking on 'Advanced Editor' in the top-right corner. 
+ Every function consist of at least two files, let start with <b>function.json</b>. This file contains the configuration of the function. In the Azure Portal, this is the 'Integrate' tab when you edit your function, you can see the underlying JSON in the Azure Portal by clicking on 'Advanced Editor' in the top-right corner. 
   
 <a id="single_image" href="/img/2016/function_integrate.png" class="fancybox" rel="azureportalfunctions"><img src="/img/2016/function_integrate_thumb.png"/></a> <a id="single_image" href="/img/2016/function_integrate_json.png" class="fancybox" rel="azureportalfunctions"><img src="/img/2016/function_integrate_json_thumb.png"/></a>
  
