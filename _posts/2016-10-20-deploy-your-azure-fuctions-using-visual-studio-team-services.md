@@ -6,26 +6,28 @@ backgroundUrl: /img/deploy.jpg
 comments: true 
 ---  
 
-[Azure Functions](https://azure.microsoft.com/en-us/services/functions/) have been around for a couple of months and I start using them more and more. Recently I wanted to deploy my Azure Function as part of a CI/CD flow in Visual Studio Team Services (VSTS) Release Management. I'd like to show you how I did this.
+[Azure Functions](https://azure.microsoft.com/en-us/services/functions/) have been around for a couple of months now and I start using them more and more. Recently I wanted to deploy my Azure Function as part of a CI/CD flow in Visual Studio Team Services (VSTS) Release Management. I'd like to share how I did this.
 
 <!--more-->
 
 ## Why
 
-You can do Continuous Deployment from you Azure Function using standard AppService deployment blade:
+Continuous Deployment can be enabled using the standard AppService deployment blade:
 
  <a id="single_image" href="/img/2016/azuredeployment.png" class="fancybox"><img src="/img/2016/azuredeployment_thumb.png"/></a>
 
- The problem with this, it cannot be integrated with a mature release/deployment pipeline and it deploy's after each code update. Instead...
+ The problem with this is, it cannot be integrated with a mature release/deployment pipeline and it deploy's after each code update in the connected repository.
 
- What we want:
+ Instead, what we want:
 
- - Release and Deploy our Azure Function in the same manner as other solution's components
- - Have our Azure Function's in (existing) ARM template
+ - Release and Deploy the Azure Function in the same manner as other solution's (PaaS) components
+ - Have the Azure Function's in (existing) ARM template
  - Benefit from widely used and advanced deployment technologies
 
 ## ARM Template
-The first step is to include our Azure Function in our ARM Template. An Azure Function is a specialized kind of AppService and requires an additional storage account.
+The first step is to include the Azure Function in the ARM Template. An Azure Function is a specialized kind of AppService. 
+
+Besides the snippet below, an Azure Function requires an additional storage account compared to a regular AppService, this storage account is not includes in this snippet but is include in the [example template](https://github.com/keesschollaart81/azure-function-deploy/blob/master/AzureFunctionDeployExample/Templates/azuredeploy.json).
 
 ~~~ json
 {
@@ -41,13 +43,13 @@ The first step is to include our Azure Function in our ARM Template. An Azure Fu
 		"type": "config",
 		"dependsOn": [ "[concat('Microsoft.Web/Sites/', variables('functionapp_name'))]" ],
 		"properties": {
-			"Example_Custom_AppSetting": "...",
-
 			"FUNCTIONS_EXTENSION_VERSION": "~0.6",
 			"AZUREJOBS_EXTENSION_VERSION": "beta",
 
 			"AzureWebJobsDashboard": "[variables('storage_connectionstring')",
-			"AzureWebJobsStorage": "[variables('storage_connectionstring')"
+			"AzureWebJobsStorage": "[variables('storage_connectionstring')",
+			
+			"Example_Custom_AppSetting": "..."
 		}
 	}] 
 } 
@@ -55,45 +57,45 @@ The first step is to include our Azure Function in our ARM Template. An Azure Fu
 Notice this AppService is of ```kind```: ```"functionapp"``` and it has four special and required appsettings. You can add your own appsettings as well (```Example_Custom_AppSetting```), this can be useful when you need for example:
 
 - Use ConnectionStrings in your functions to other resources in your ARM Template
-- Use values/settings from your CI/CD flow via the ARM Template's parameters
-
-Besides this AppService we need to provision a Storage Account.
+- Use values/settings from your CI/CD flow via the ARM Template's parameters 
 
 The whole ARM Template is available in [the ARM Template in my example project on GitHub](https://github.com/keesschollaart81/azure-function-deploy/blob/master/AzureFunctionDeployExample/Templates/azuredeploy.json).
 
 ## Visual Studio Project
-A Visual Studio solution/project is not strictly required when you want to deploy an Azure Function together with an ARM Template. In this Example I created a 'Resource Group Project' because (in my experience) functions are usually part of a bigger solution. But you can also host your template and function folder structure in your source repository without the solution and project files.
+A Visual Studio solution/project (file) is not strictly required when you want to deploy an Azure Function. In this Example I created a Visual Studio project of type 'Resource Group Project'. This is because I'd like to work in Visual Studio and because (in my experience) functions are usually part of a bigger solution. But you can also host the template and Azure Function's folder structure in your own source repository without the Visual Studio solution and project files.
 
 <a id="single_image" href="/img/2016/newproject.png" class="fancybox"><img src="/img/2016/newproject_thumb.png"/></a>
 
-My solution structure looks like this:
+My Visual Studio solution structure looks like this:
 
  <a id="single_image" href="/img/2016/solutionexplorer.png" class="fancybox"><img src="/img/2016/solutionexplorer_thumb.png"/></a>
 
  The 'ExampleFunctionApp' in the screenshot above maps to a single FunctionApp (as configured in the ARM Template before). Every subfolder (only 'Timer' in this case) is a function within the FunctionApp: a FunctionApp can contain multiple functions.
 
- Every function consist of at least two files, let start with function.json. This file contains the configuration of the function. In the Azure Portal, this is the 'Integrate' tab when you edit your function, you can see the underlying JSON by clicking on 'Advanced Editor' in the top-right corner. 
+ Every function consist of at least two files, let start with <b>function.json</b>. This file contains the configuration of the function. In the Azure Portal, this is the 'Integrate' tab when you edit your function, you can see the underlying JSON in the Azyre Portal by clicking on 'Advanced Editor' in the top-right corner. 
   
 <a id="single_image" href="/img/2016/function_integrate.png" class="fancybox" rel="azureportalfunctions"><img src="/img/2016/function_integrate_thumb.png"/></a> <a id="single_image" href="/img/2016/function_integrate_json.png" class="fancybox" rel="azureportalfunctions"><img src="/img/2016/function_integrate_json_thumb.png"/></a>
  
-The run.csx file is your Azure Function entry point and contains the C# code of your function.
+The <b>run.csx</b> file is your Azure Function's entry point and contains the C# code of your function.
 
-If you're using NuGet packages or do other advanced stuff, you might need the project.json file. I included one in my example project for reference.
+If you're using NuGet packages or do other advanced stuff, you might need and addition third file: the <b>project.json</b> file. I included one in my example project for reference.
+
+When we look in the AppService's underlying filestructure using [Kudu](https://blogs.msdn.microsoft.com/benjaminperkins/2014/03/24/using-kudu-with-windows-azure-web-sites/), it's important to understand that each function (not FunctionApp) has it's own folder in the /site/wwwroot/ folder. In my example the /site/wwwroot/ has it's one folder: 'Timer', in this 'Timer' folder are my function's three files.
 
 ## Deployment alternatives
 
-In the next two chapters I will use Visual Studio Team Services deploy my Azure Function but you can deploy your Azure Function using other systems as well. 
+In the next two chapters I will use Visual Studio Team Services to deploy my Azure Function but you can deploy using other systems as well: 
 
-The ARM Template can be deployed using, [PowerShell](https://azure.microsoft.com/nl-nl/documentation/articles/resource-group-template-deploy/), the [Azure CLI](https://azure.microsoft.com/nl-nl/documentation/articles/xplat-cli-azure-resource-manager/), etc.
-
-
-The Azure function can be deployed using [all Azure's AppService deployments options](https://azure.microsoft.com/nl-nl/documentation/articles/web-sites-deploy/). It's important to know that each function (not FunctionApp) has it's own folder in the /site/wwwroot/ folder, in my example the /site/wwwroot/ has it's one folder: 'Timer', in this 'Timer' folder are my function's three files.
+- The ARM Template can be deployed using [PowerShell](https://azure.microsoft.com/nl-nl/documentation/articles/resource-group-template-deploy/), the [Azure CLI](https://azure.microsoft.com/nl-nl/documentation/articles/xplat-cli-azure-resource-manager/), etc.
+- The Azure function can be deployed using [all Azure's AppService deployments options](https://azure.microsoft.com/nl-nl/documentation/articles/web-sites-deploy/). 
 
 ## VSTS Build
 
-In our VSTS Build Definition, we have to copy our template and Azure Function's files to the drop-folder so that our Release Definition can use these files.
+In the VSTS Build Definition, we copy/deploy all the files to the drop folder, in this way, we can use this files in our Release Definition later.
 
-First, add two 'Copy Files' build steps, let's copy the contents of our 'Templates' folder to the ```$(Build.ArtifactStagingDirectory)\template``` staging directory. In the second step copy the contents of the FunctionApp  to the ```$(Build.ArtifactStagingDirectory)\example-function``` staging directory. The UI can be a little too helpful in the directory-picker, do not select the deepest level in the directory tree (see 3th screenshot).
+- Add two 'Copy Files' build steps
+- In the first step, copy the contents of the 'Templates' folder to the ```$(Build.ArtifactStagingDirectory)\template``` staging directory
+- In the second step, copy the contents of the FunctionApp  to the ```$(Build.ArtifactStagingDirectory)\example-function``` staging directory. The UI can be a little too helpful in the directory-picker, do not select the deepest level in the directory tree (see 3th screenshot).
 
 Now start a build and confirm that it completes succesfully.
 
@@ -101,17 +103,17 @@ Now start a build and confirm that it completes succesfully.
 
 ## VSTS Release
 
-In our VSTS Release Definition, we have to add two tasks: 'Azure Resource Group Deployment' and 'Azure App Service Deployment: ARM'.
+In the VSTS Release Definition, add two tasks: 'Azure Resource Group Deployment' and 'Azure App Service Deployment: ARM'.
 
 <a id="single_image" href="/img/2016/vsts_release1.png" class="fancybox"  ><img src="/img/2016/vsts_release1_thumb.png"/></a>
 
-To configure the first step, we are required to have our VSTS connected to our Azure AD/Subscription. I will not go into details, there are some in-depth how-to's on this already on [msdn](https://blogs.msdn.microsoft.com/visualstudioalm/2015/10/04/automating-azure-resource-group-deployment-using-a-service-principal-in-visual-studio-online-buildrelease-management/)  and [visualstudio.com](https://www.visualstudio.com/en-us/docs/setup-admin/team-services/manage-organization-access-for-your-account-vs). 
+To configure the first step, you are required to have VSTS connected to an Azure AD/Subscription. I will not go into the details because there are some in-depth how-to's on this already at [MSDN](https://blogs.msdn.microsoft.com/visualstudioalm/2015/10/04/automating-azure-resource-group-deployment-using-a-service-principal-in-visual-studio-online-buildrelease-management/) and [VisualStudio.com](https://www.visualstudio.com/en-us/docs/setup-admin/team-services/manage-organization-access-for-your-account-vs). 
 
-Type or select your action, resource group and location, then select your template and template.parameters files.
+In the first step, type or select your action, resource group and location, then select your template and template.parameters files.
 
 <a id="single_image" href="/img/2016/vsts_release2.png" class="fancybox"  ><img src="/img/2016/vsts_release2_thumb.png"/></a>
 
-In my example, I have parameterized this name of the FunctionApp's name, in the 'Override Template Parameters' field, this ARM Template parameter value can be overridden using a PowerShell parameter notation. In my case the name of the ARM Template parameter is 'functionapp_name' so the value of the 'Override Template Parameters' field is: ```-functionapp_name "MyFunctionApp12345"```
+In my example, I have parameterized my ARM Template to set the name of the FunctionApp's, in the 'Override Template Parameters' field, the value for this parameter can be 'injected'. In my case the name of the ARM Template parameter is 'functionapp_name' so the value of the 'Override Template Parameters' field is: ```-functionapp_name "MyFunctionApp12345"```
 
 In the second task, we have to select the Subscription again. In the 'App Service Name' field, we have to provide the name of the FunctionApp. In my example this has to match the parameterized ARM Template value from the previous step ('MyFunctionApp12345'). The first time you deploy your function, the combobox does not populate your AppServices name, just type the name.
 
@@ -119,7 +121,7 @@ The 'Package or Folder' provides you a ... directory picker, select the folder F
 
 Make sure the 'Publish using Web Deploy' checkbox in checked. 
 
-<a id="single_image" href="/img/2016/vsts_release3.png" class="fancybox"  ><img src="/img/2016/vsts_release3_thumb.png"/></a>
+<a id="single_image" href="/img/2016/vsts_release3.png" class="fancybox"><img src="/img/2016/vsts_release3_thumb.png"/></a>
  
 Now create a release and see if your Azure Function will be deployed!
 
