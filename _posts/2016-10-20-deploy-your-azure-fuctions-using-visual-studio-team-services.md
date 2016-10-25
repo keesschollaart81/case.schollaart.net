@@ -27,7 +27,7 @@ Continuous Deployment can be enabled using the standard AppService deployment bl
 ## ARM Template
 The first step is to include the Azure Function in the ARM Template. An Azure Function is a specialized kind of AppService. 
 
-Besides the snippet below, an Azure Function requires an additional storage account compared to a regular AppService, this storage account is not includes in this snippet but is include in the [example template](https://github.com/keesschollaart81/azure-function-deploy/blob/master/AzureFunctionDeployExample/Templates/azuredeploy.json).
+Besides the snippet below, an Azure Function requires an additional storage account compared to a regular AppService, this storage account is not included in this snippet but is included in the [example template](https://github.com/keesschollaart81/azure-function-deploy/blob/master/AzureFunctionDeployExample/Templates/azuredeploy.json).
 
 ~~~ json
 {
@@ -59,10 +59,10 @@ Notice this AppService is of ```kind```: ```"functionapp"``` and it has four spe
 - Use ConnectionStrings in your functions to other resources in your ARM Template
 - Use values/settings from your CI/CD flow via the ARM Template's parameters 
 
-The whole ARM Template is available in [the ARM Template in my example project on GitHub](https://github.com/keesschollaart81/azure-function-deploy/blob/master/AzureFunctionDeployExample/Templates/azuredeploy.json).
+The ARM Template is available in [the ARM Template in my example project on GitHub](https://github.com/keesschollaart81/azure-function-deploy/blob/master/AzureFunctionDeployExample/Templates/azuredeploy.json).
 
 ## Visual Studio Project
-A Visual Studio solution/project (file) is not strictly required when you want to deploy an Azure Function. In this Example I created a Visual Studio project of type 'Resource Group Project'. This is because I'd like to work in Visual Studio and because (in my experience) functions are usually part of a bigger solution. But you can also host the template and Azure Function's folder structure in your own source repository without the Visual Studio solution and project files.
+A Visual Studio solution/project (file) is not strictly required when you want to deploy an Azure Function. In this example I created a Visual Studio project of type 'Resource Group Project'. This is because I like to work in Visual Studio and because (in my experience) functions are usually part of a bigger solution. But you can also host the template and Azure Function's folder structure in your own source repository without the Visual Studio solution and project files.
 
 <a id="single_image" href="/img/2016/newproject.png" class="fancybox"><img src="/img/2016/newproject_thumb.png"/></a>
 
@@ -80,7 +80,7 @@ The <b>run.csx</b> file is your Azure Function's entry point and contains the C#
 
 If you're using NuGet packages or do other advanced stuff, you might need and addition third file: the <b>project.json</b> file. I included one in my example project for reference.
 
-When we look in the AppService's underlying filestructure using [Kudu](https://blogs.msdn.microsoft.com/benjaminperkins/2014/03/24/using-kudu-with-windows-azure-web-sites/), it's important to understand that each function (not FunctionApp) has it's own folder in the /site/wwwroot/ folder. In my example the /site/wwwroot/ has it's one folder: 'Timer', in this 'Timer' folder are my function's three files.
+When we look in the AppService's underlying filestructure using [Kudu](https://blogs.msdn.microsoft.com/benjaminperkins/2014/03/24/using-kudu-with-windows-azure-web-sites/), it's important to understand that each function (not FunctionApp) has it own folder in the /site/wwwroot/ folder. In my example the /site/wwwroot/ has it's one folder: 'Timer', in this 'Timer' folder are my function's three files.
 
 ## Deployment alternatives
 
