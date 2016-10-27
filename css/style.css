@@ -16,12 +16,12 @@ a {
 @media all and (min-width: 1324px) {
     body #container {
         height: 100%;
-        width: 1324px;
+        width: 1274px;
         float: right;
     }
     body #content {
         float: right;
-        width: 1024px;
+        width: 974px;
     }
 }
 @media all and (max-width: 800px) {
