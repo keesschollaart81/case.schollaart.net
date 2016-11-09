@@ -44,7 +44,6 @@ Besides the snippet below, an Azure Function requires an additional storage acco
 		"dependsOn": [ "[concat('Microsoft.Web/Sites/', variables('functionapp_name'))]" ],
 		"properties": {
 			"FUNCTIONS_EXTENSION_VERSION": "~0.6",
-			"AZUREJOBS_EXTENSION_VERSION": "beta",
 
 			"AzureWebJobsDashboard": "[variables('storage_connectionstring')",
 			"AzureWebJobsStorage": "[variables('storage_connectionstring')",
