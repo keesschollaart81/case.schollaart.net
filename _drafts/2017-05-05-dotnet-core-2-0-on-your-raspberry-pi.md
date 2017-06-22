@@ -1,6 +1,6 @@
 --- 
 layout: post
-title: ".NET Core 2.0 (ARM) on your Raspberry Pi"
+title: ".NET Core 2.0 (ARM) on your Raspberry Pi with Azure IoT Hub"
 author: "Kees Schollaart" 
 backgroundUrl: /img/back4.jpg
 comments: true 
@@ -42,8 +42,9 @@ Go to the CoreFx github repository and search for the .tar.gz file under 'Linux 
 
 There's also an Ubuntu 16.04 build but that one is targetted for x64 architecture (instead of ARM). 
 
-~~~ bash
-# 'wget' the url you just copied
+Now into our SSH session 'wget' this package using the URL we just copied:
+
+~~~ bash 
 wget https://dotnetcli.blob.core.windows.net/dotnet/Runtime/master/dotnet-runtime-latest-linux-arm.tar.gz
 
 mkdir /home/ubuntu/dotnet
@@ -61,5 +62,35 @@ The CLI is not (yet) available on Linux/ARM, follow [this thread](https://github
 
 ## Our test app
 
+In order to test if this works I've created a test app a little bit more complex than just <i>Hello World</i>. This app uses the Azure IoT Hub Device SDK and listens to messages which involves serialization, AMQP, security etc.
+
+The test app can be found in this GitHub repository:
+[https://github.com/keesschollaart81/DotNetCoreIotHubDeviceClientExample](https://github.com/keesschollaart81/DotNetCoreIotHubDeviceClientExample)
+
+Let highlight some parts which make this work:
+
+``` xml
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <OutputType>Exe</OutputType> 
+    <TargetFramework>netcoreapp2.0</TargetFramework>
+    <RuntimeFrameworkVersion>2.0.0-*</RuntimeFrameworkVersion>
+    <RuntimeIdentifiers>win8-arm;ubuntu.14.04-arm;ubuntu.16.04-arm</RuntimeIdentifiers>
+</PropertyGroup> 
+ * snip *
+</Project> 
+```
+
+First thing to notice is the target framework, we're specifically targetting netcoreapp2.0, this version of the framework is needed on the development machine and also on the Linux distro (which I just showed).
+
+Also notice the RuntimeIdentifiers. This element needs to be added and tells the compiler to target a specific runtime. Because this is targetting specifically ARM Based runtimes, it's not possible to run this build on X86 runtimes.
+
 ## Deploy and Run
 
+In order to run the application it needs to be published using ```dotnet publish  -r ubuntu.16.04-arm```. After that go to the ```/DotNetCoreIotHubDeviceClientExample/bin/Debug/netcoreapp2.0/ubuntu.16.04-arm/publish/``` folder.
+
+From within this folder run ```scp -pr . ubuntu@192.168.2.22:/home/ubuntu/testapp/``` to copy all files in  this publish folder to a 'testapp' folder on Ubuntu. 
+
+Now SSH into Ubuntu and navigate to the ```/home/ubuntu/testapp/``` folder. Inside this folder run ```dotnet ./CoreIotHubClient.dll```
+
+<a id="single_image" href="/img/2017/run.png" class="fancybox"><img src="/img/2017/run_thumb.png"/></a>
