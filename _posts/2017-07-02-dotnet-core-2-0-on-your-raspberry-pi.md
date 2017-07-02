@@ -6,9 +6,7 @@ backgroundUrl: /img/back4.jpg
 comments: true 
 ---  
 
-asdasdasd
-
-asdasdasd
+In this post I'll describe how you connect you're Raspberry Pi 3 to Azure IoT Hub using .NET Core.
 
 <!--more-->
 
@@ -42,7 +40,7 @@ Go to the CoreFx github repository and search for the .tar.gz file under 'Linux 
 
 There's also an Ubuntu 16.04 build but that one is targetted for x64 architecture (instead of ARM). 
 
-Now into our SSH session 'wget' this package using the URL we just copied:
+Now into our SSH session, 'wget' this package using the URL we just copied:
 
 ~~~ bash 
 wget https://dotnetcli.blob.core.windows.net/dotnet/Runtime/master/dotnet-runtime-latest-linux-arm.tar.gz
