@@ -104,24 +104,28 @@ CustomVision.ai makes it really easy to train an AI model to detect objects in a
  - Bike Jasmijn (kids bike)
  - Bike Marleen (wifes bike)
 
-Training looks like this:
+Below some screens of CustomVision.ai,
+
+The first image shows the index of training images.
+The second image shows the screen to set the objects on the training image
+The third screen shows the results of a training run
+
 
 <a id="single_image" href="/img/2018/customvision-index.png" class="fancybox" rel="customvision"><img src="/img/2018/customvision-index-thumb.png"/></a> 
-<a id="single_image" href="/img/2018/customvision-train.png" class="fancybox" rel="customvision"><img src="/img/2018/customvision-train-thumb.png"/></a>
+<a id="single_image" href="/img/2018/customvision-train.png" class="fancybox" rel="customvision"><img src="/img/2018/customvision-train-thumb.png"/></a> <a id="single_image" href="/img/2018/customvision-performance.png" class="fancybox" rel="customvision3"><img src="/img/2018/customvision-performance-thumb.png"/></a>
 
 When each tag has 15 or more training images the model can be trained, the result of this training is called an interation and can be used.
 
-<a id="single_image" href="/img/2018/customvision-performance.png" class="fancybox" rel="customvision3"><img src="/img/2018/customvision-performance-thumb.png"/></a>
 
 Now we can use this trained model to detect objects in (new) images using their API. I've implemented the backend in C# therfor I interact with this API using their SDK available as a NuGet package: [Microsoft.Azure.CognitiveServices.Vision.CustomVision.Prediction](https://www.nuget.org/packages/Microsoft.Azure.CognitiveServices.Vision.CustomVision.Prediction/). I used [step 6 of this HowTo](https://docs.microsoft.com/en-us/azure/cognitive-services/custom-vision-service/csharp-tutorial-od#step-6-get-and-use-the-default-prediction-endpoint) to get this working. The code calling this CustomVision API is as simple as [this](https://github.com/keesschollaart81/Home-Assistant-Backend/blob/master/src/Function/MotionService.cs#L98-L106):
 
 ~~~ cs
 var endpoint = new PredictionEndpoint() { ApiKey = _config.PredictionKey };
-var predictionResult = await endpoint.PredictImageAsync(new Guid(_config.ProjectId), stream);
+var predictionResult = await endpoint.PredictImageAsync(new Guid(_config.ProjectId), streamOfImage);
 
 foreach (var c in predictionResult.Predictions)
 {
-    _log.LogDebug($"\t{c.TagName}: {c.Probability:P1} [ {c.BoundingBox.Left}, {c.BoundingBox.Top}, {c.BoundingBox.Width}, {c.BoundingBox.Height} ]");
+    _log.LogDebug($"\t{c.TagName}: {c.Probability:P1}");
 }
 
 var meaningfulPredictions = predictionResult.Predictions.Where(x => x.Probability > 0.15);
@@ -135,7 +139,7 @@ At this point I use CustomVision.ai but I'll expect to move to the Azure Based c
 
 ## The result
  
-I added these four indicators to my Home Assistant dashboard along with a live view of the backyard with and a latest motion-snapshop.
+I added these four indicators to my Home Assistant dashboard along with a live view of the backyard with and a latest motion-snapshop. These values can be seen in the screenshot below, in the middle column ('Backyard');
 
 <img src="/img/2018/ha-result.png"/>
 
