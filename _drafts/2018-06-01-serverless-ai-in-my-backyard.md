@@ -12,49 +12,52 @@ Recently I added some cool stuff to my home automation platform using computer v
 
 ## The 'problem'
 
-When you have kids you know, they leave doors open, also the gate in the fence. This does not have to be a big problem, except when there are bike's unlocked in the backyard, we dont want them to be stolen! 
+When you have kids, you know: they leave doors open. In this case, the gate in the fence. This does not have to be a big problem, except when there are bike's unlocked in the backyard, we dont want them to be stolen! 
 
 I have a Home Automation platform running but I dont want to equip my bikes with sensors. I also dont want to put sensors on this wooden gate in my fence. 
 
 How can I monitor this situation and being alerted when this occurs?
 
-<img src="/img/2018/the-problem.png"/>
+<img src="/img/2018/the-problem.jpeg"/>
 
 ## Solution overview
 
 The solution consists of four major pieces:
 
-- Home Assistant
+1 **Home Assistant**
  
   [Home Assistant](https://www.home-assistant.io/) is an open-source home automation platform running on Python 3. You can track and control all devices at home and automate control. 
 
-- CustomVision.ai
+2 **CustomVision.ai**
 
   With [CustomVision.ai](https://customvision.ai) you can easily customize your own state-of-the-art computer vision models that fit perfectly with your unique use case. Just bring a few examples of labeled images and let Custom Vision do the hard work.
 
-- Azure Functions
+3 **Azure Functions**
 
   Accelerate your development with an event-driven, serverless compute experience. Scale on demand and pay only for the resources you consume.
 
-- Dafang Hacks
+4 **Dafang Hacks**
 
   This is the [custom firmware for the Xiaomi Dafang camera](https://github.com/EliasKotlyar/Xiaomi-Dafang-Hacks) which enables motion tracking, full HD camera and MQTT publishing.
 
 The camera publishes messages to a MQTT topic when motion is detected. These 'motion-detected' messages are published on the MQTT Broker inside of Home Assistant. An Azure Function is subscribed to this topic, gets the current picture of the camera an pushes this iamge to the Custom Vision api. This Custom Vision is trained by me and knows what an open gate and a bike looks like. The result is parsed in the Azure Function and then published back to the MQTT broker. In Home Assistant a sensor is configured to listen to this result and with that, I can do all sort of cool stuff with these values inside of Home Assistant.
 
+<iframe width="560" height="315" src="https://www.youtube.com/embed/BZbChsi4xyA" frameborder="0" allow="autoplay; encrypted-media" allowfullscreen></iframe>
+
 ## The hardware
 
 ### The Home Assistant host
 
-I want my Home Automation to work, also without Internet. Therefor I run Home Assistant using [Hassio](https://www.home-assistant.io/hassio/) on a [Raspberry Pi 3](https://www.raspberrypi.org/products/raspberry-pi-3-model-b/).
+There are multiple ways to host Home Assistant, I want my Home Automation to work, also without Internet. Therefor I run Home Assistant using [Hassio](https://www.home-assistant.io/hassio/) on a [Raspberry Pi 3](https://www.raspberrypi.org/products/raspberry-pi-3-model-b/). 
 
 ### Xiaomi Dafang Camera
+
+<img style="float: right;" src="/img/2018/xiaomi-dafang.jpg">
 
 This camera is both cheap and feature rich. It's only ±30 euros at [GearBest](https://www.gearbest.com/ip-cameras/pp_693217.html) and [AliExpress](https://www.aliexpress.com/item/Xiaomi-Mijia-Xiaofang-Dafang-Smart-IP-Camera-110-Degree-1080p-FHD-Intelligent-Security-WIFI-IP-Cam/32839736818.html)
 
 I've updated the camera's firmware to be able to use it in a more advanced manner. With the [Dafang Hacks Custom Firmware](https://github.com/EliasKotlyar/Xiaomi-Dafang-Hacks) there are lots of possibilities. Also check out their documentation on how to integrate with [Home Assistant](https://github.com/EliasKotlyar/Xiaomi-Dafang-Hacks/blob/master/integration/homeassistant/homeassistant.md).
 
-<!-- <img src="/img/2018/xiaomi-dafang.jpg"/> -->
 <img src="/img/2018/xiaomi-dafang-motion-settings.png"/>
 
 As you can see in the image above, its easy to setup a zone for motion detection. I dont want motion-events when a car drives by or when the wind blows the plants too much.
