@@ -187,7 +187,9 @@ a {
     color: gray;
     font-family: 'Slabo 13px', serif;
 }
-
+#content img  { 
+    max-width: 100%;
+}
 #content a { 
     color: #00047D; 
 	text-decoration: underline;
