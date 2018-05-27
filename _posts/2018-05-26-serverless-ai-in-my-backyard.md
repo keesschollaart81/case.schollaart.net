@@ -24,25 +24,25 @@ How can I monitor this situation and being alerted when this occurs?
 
 The solution consists of four major pieces:
 
-1 **Home Assistant**
+- **Home Assistant**
  
   [Home Assistant](https://www.home-assistant.io/) is an open-source home automation platform running on Python 3. You can track and control all devices at home and automate control. 
 
-2 **CustomVision.ai**
+- **CustomVision.ai**
 
   With [CustomVision.ai](https://customvision.ai) you can easily customize your own state-of-the-art computer vision models that fit perfectly with your unique use case. Just bring a few examples of labeled images and let Custom Vision do the hard work.
 
-3 **Azure Functions**
+- **Azure Functions**
 
   Accelerate your development with an event-driven, serverless compute experience. Scale on demand and pay only for the resources you consume.
 
-4 **Dafang Hacks**
+- **Dafang Hacks**
 
   This is the [custom firmware for the Xiaomi Dafang camera](https://github.com/EliasKotlyar/Xiaomi-Dafang-Hacks) which enables motion tracking, full HD camera and MQTT publishing.
 
 The camera publishes messages to a MQTT topic when motion is detected. These 'motion-detected' messages are published on the MQTT Broker inside of Home Assistant. An Azure Function is subscribed to this topic, gets the current picture of the camera an pushes this iamge to the Custom Vision api. This Custom Vision is trained by me and knows what an open gate and a bike looks like. The result is parsed in the Azure Function and then published back to the MQTT broker. In Home Assistant a sensor is configured to listen to this result and with that, I can do all sort of cool stuff with these values inside of Home Assistant.
 
-<iframe width="560" height="315" src="https://www.youtube.com/embed/BZbChsi4xyA" frameborder="0" allow="autoplay; encrypted-media" allowfullscreen></iframe>
+<iframe width="100%" src="https://www.youtube.com/embed/BZbChsi4xyA" frameborder="0" allow="autoplay; encrypted-media" allowfullscreen style="width:100%"></iframe>
 
 ## The hardware
 
@@ -106,12 +106,12 @@ CustomVision.ai makes it really easy to train an AI model to detect objects in a
 
 Training looks like this:
 
-<img src="/img/2018/customvision-index.png"/>
-<img src="/img/2018/customvision-train.png"/>
+<a id="single_image" href="/img/2018/customvision-index.png" class="fancybox" rel="customvision"><img src="/img/2018/customvision-index-thumb.png"/></a> 
+<a id="single_image" href="/img/2018/customvision-train.png" class="fancybox" rel="customvision"><img src="/img/2018/customvision-train-thumb.png"/></a>
 
 When each tag has 15 or more training images the model can be trained, the result of this training is called an interation and can be used.
 
-<img src="/img/2018/customvision-performance.png"/>
+<a id="single_image" href="/img/2018/customvision-performance.png" class="fancybox" rel="customvision3"><img src="/img/2018/customvision-performance-thumb.png"/></a>
 
 Now we can use this trained model to detect objects in (new) images using their API. I've implemented the backend in C# therfor I interact with this API using their SDK available as a NuGet package: ```[Microsoft.Azure.CognitiveServices.Vision.CustomVision.Prediction](https://www.nuget.org/packages/Microsoft.Azure.CognitiveServices.Vision.CustomVision.Prediction/)```. I used [step 6 of this HowTo](https://docs.microsoft.com/en-us/azure/cognitive-services/custom-vision-service/csharp-tutorial-od#step-6-get-and-use-the-default-prediction-endpoint) to get this working. The code calling this CustomVision API is as simple as [this](https://github.com/keesschollaart81/Home-Assistant-Backend/blob/master/src/Function/MotionService.cs#L98-L106):
 
@@ -131,7 +131,7 @@ After images are send to CustomVision.ai these predictions can be monitored. Eac
 
 At this point I use CustomVision.ai but I'll expect to move to the Azure Based computer vision PaaS service. CustomVision.ai is a good kickstarter because it has this easy to use UI to play with.
 
-<img src="/img/2018/customvision-predictions.png"/>
+<a id="single_image" href="/img/2018/customvision-predictions.png" class="fancybox" rel="customvision2"><img src="/img/2018/customvision-predictions-thumb.png"/></a>
 
 ## The result
  
@@ -145,7 +145,7 @@ I can now use these 'sensor-states' in all of my Home Assitant goodness... Endle
 
 Sometimes the detection makes mistakes, like this:
 
-<img src="/img/2018/not-bike-jasmijn.png"/>
+<a id="single_image" href="/img/2018/not-bike-jasmijn.png" class="fancybox" rel="notbikejasmijn"><img src="/img/2018/not-bike-jasmijn-thumb.png"/></a>
 
 In my experience this almost never happens. Everyday I process about 50 images of the day to train the model even further. In this example Jasmijns bike was visible but in a new 'rotation' (steer to the right) which was unknown up to that point. It will require time to train the model in order to increase the accuracy. I now have ±400 training images an can say that its 97% accurate.
 
@@ -161,6 +161,6 @@ Then we have CustomVision.ai. [The free model for Custom Vision](https://azure.m
 
 I use only 6 tags and ±5000 predictions per month. So this is free for me as well.
 
-<img src="/img/2018/customvision-costs.png"/>
+<a id="single_image" href="/img/2018/customvision-costs.png" class="fancybox" rel="costs"><img src="/img/2018/customvision-costs-thumb.png"/></a>
 
 My motion snapshots are also persisted in [Azure Blob Storage](https://azure.microsoft.com/en-us/pricing/details/storage/blobs/). These files are ±1mb for me so this increases with 5gb every month, this is equal to ±25ct per month...  
