@@ -58,17 +58,17 @@ This camera is both cheap and feature rich. It's only ±30 euros at [GearBest](h
 
 I've updated the camera's firmware to be able to use it in a more advanced manner. With the [Dafang Hacks Custom Firmware](https://github.com/EliasKotlyar/Xiaomi-Dafang-Hacks) there are lots of possibilities. Also check out their documentation on how to integrate with [Home Assistant](https://github.com/EliasKotlyar/Xiaomi-Dafang-Hacks/blob/master/integration/homeassistant/homeassistant.md).
 
-<img src="/img/2018/xiaomi-dafang-motion-settings.png"/>
+This image shows the web interface of the dafang camera. As you can see, its easy to setup a zone for motion detection. I dont want motion-events when a car drives by or when the wind blows the plants too much.
 
-As you can see in the image above, its easy to setup a zone for motion detection. I dont want motion-events when a car drives by or when the wind blows the plants too much.
+<img src="/img/2018/xiaomi-dafang-motion-settings.png"/>
 
 ## Home Assistant
 
 My home is automated using Home Assistant, it is configured using YAML files, my configuration is open, [check it out on GitHub](https://github.com/keesschollaart81/Home-Assistant-Configuration).
 
-I use it for all kind of stuff, for example, I turn on/off my [Yeelight Smart Led Bulb's](https://www.yeelight.com/en_US/product/wifi-led-w) using [Xiaomis wall switches](https://xiaomi-mi.com/sockets-and-sensors/aqara-smart-light-wall-switch-zigbee-version-double-key/) and Alexa. I measure all sorts of sensors, for example Eneco Toon, motion, humidity, etc. (mostly using [Xiaomi Home](https://xiaomi-mi.com/sockets-and-sensors/xiaomi-mi-smart-home-kit/)). We get a push notification when the washing machine is ready, etc. etc.
+I use HA for all kind of stuff, for example, I turn on/off my [Yeelight Smart Led Bulb's](https://www.yeelight.com/en_US/product/wifi-led-w) using [Xiaomis wall switches](https://xiaomi-mi.com/sockets-and-sensors/aqara-smart-light-wall-switch-zigbee-version-double-key/) and Alexa. I measure all sorts of sensors, for example Eneco Toon, motion, humidity, etc. (mostly using [Xiaomi Home](https://xiaomi-mi.com/sockets-and-sensors/xiaomi-mi-smart-home-kit/)). We get a push notification when the washing machine is ready, etc. etc.
 
-For this case, Home Assistant does four things:
+In the context of this project, Home Assistant does four things:
 
 - Acts as the MQTT broker ([what is MQTT](http://mqtt.org/faq))
 - Processes the status of objects in the backyard (gate,door,bikes) based on MQTT messages as persist this state as sensor-value in HA ([MQTT Sensor config](https://github.com/keesschollaart81/Home-Assistant-Configuration/blob/master/configuration.yaml#L71-L82)
