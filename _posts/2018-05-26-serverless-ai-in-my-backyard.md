@@ -137,23 +137,19 @@ At this point I use CustomVision.ai but I'll expect to move to the Azure Based c
 
 <a id="single_image" href="/img/2018/customvision-predictions.png" class="fancybox" rel="customvision2"><img src="/img/2018/customvision-predictions-thumb.png"/></a>
 
-## The result
- 
-I added these four indicators to my Home Assistant dashboard along with a live view of the backyard with and a latest motion-snapshop. These values can be seen in the screenshot below, in the middle column ('Backyard');
-
-<img src="/img/2018/ha-result.png"/>
-
-I can now use these 'sensor-states' in all of my Home Assitant goodness... Endless possibilities.
-
-### Bad detections
+## Bad detections
 
 Sometimes the detection makes mistakes, like this:
 
 <a id="single_image" href="/img/2018/not-bike-jasmijn.png" class="fancybox" rel="notbikejasmijn"><img src="/img/2018/not-bike-jasmijn-thumb.png"/></a>
 
-In my experience this almost never happens. Everyday I process about 50 images of the day to train the model even further. In this example Jasmijns bike was visible but in a new 'rotation' (steer to the right) which was unknown up to that point. It will require time to train the model in order to increase the accuracy. I now have ±400 training images an can say that its 97% accurate.
+In my experience this almost never happens. Every evening, I take some time to (by hand) process about 50 images of the day to train the model even further. In this example Jasmijns bike was visible but in a new 'rotation' (steer to the right) which was unknown up to that point. It will require time to train the model in order to increase the accuracy. I now have ±400 training images an can say that its 97% accurate.
 
-### Costs
+## Costs
+
+Apart from the hardware everything in this setup is (almost) free.
+
+Home Assistant is free.
 
 The backend is hosted in Azure. The Azure Function is hosted in the '[Consumption plan](https://azure.microsoft.com/en-us/pricing/details/functions/)'. This comes with 1.000.000 function runs free, every month! My backyard generates ± 5000 predecitions/motion-detections per month. 
 
@@ -167,4 +163,12 @@ I use only 6 tags and ±5000 predictions per month. So this is free for me as we
 
 <a id="single_image" href="/img/2018/customvision-costs.png" class="fancybox" rel="costs"><img src="/img/2018/customvision-costs-thumb.png"/></a>
 
-My motion snapshots are also persisted in [Azure Blob Storage](https://azure.microsoft.com/en-us/pricing/details/storage/blobs/). These files are ±1mb for me so this increases with 5gb every month, this is equal to ±25ct per month...  
+The only costs I make are because of my cloud storage (nice to have). My motion snapshots are  persisted in [Azure Blob Storage](https://azure.microsoft.com/en-us/pricing/details/storage/blobs/). These files are ±1mb for me so this increases with 5gb every month, this is equal to ±25ct per month...  
+
+## The result
+ 
+I added these four indicators to my Home Assistant dashboard along with a live view of the backyard with and a latest motion-snapshop. These values can be seen in the screenshot below, in the middle column ('Backyard');
+
+<img src="/img/2018/ha-result.png"/>
+
+I can now use these 'sensor-states' in all of my Home Assitant goodness... Endless possibilities.
