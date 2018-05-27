@@ -2,7 +2,7 @@
 layout: post
 title: "Serverless AI in my backyard"
 author: "Kees Schollaart" 
-backgroundUrl: /img/back4.jpg
+backgroundUrl: /img/2018/back5.jpg
 comments: true 
 ---  
 
@@ -42,7 +42,7 @@ The solution consists of four major pieces:
 
 The camera publishes messages to a MQTT topic when motion is detected. These 'motion-detected' messages are published on the MQTT Broker inside of Home Assistant. An Azure Function is subscribed to this topic, gets the current picture of the camera an pushes this iamge to the Custom Vision api. This Custom Vision is trained by me and knows what an open gate and a bike looks like. The result is parsed in the Azure Function and then published back to the MQTT broker. In Home Assistant a sensor is configured to listen to this result and with that, I can do all sort of cool stuff with these values inside of Home Assistant.
 
-<iframe width="100%" src="https://www.youtube.com/embed/BZbChsi4xyA" frameborder="0" allow="autoplay; encrypted-media" allowfullscreen style="width:100%"></iframe>
+<iframe width="100%" height="500" src="https://www.youtube.com/embed/BZbChsi4xyA" frameborder="0" allow="autoplay; encrypted-media" allowfullscreen style="width:100%"></iframe>
 
 ## The hardware
 
@@ -113,9 +113,9 @@ When each tag has 15 or more training images the model can be trained, the resul
 
 <a id="single_image" href="/img/2018/customvision-performance.png" class="fancybox" rel="customvision3"><img src="/img/2018/customvision-performance-thumb.png"/></a>
 
-Now we can use this trained model to detect objects in (new) images using their API. I've implemented the backend in C# therfor I interact with this API using their SDK available as a NuGet package: ```[Microsoft.Azure.CognitiveServices.Vision.CustomVision.Prediction](https://www.nuget.org/packages/Microsoft.Azure.CognitiveServices.Vision.CustomVision.Prediction/)```. I used [step 6 of this HowTo](https://docs.microsoft.com/en-us/azure/cognitive-services/custom-vision-service/csharp-tutorial-od#step-6-get-and-use-the-default-prediction-endpoint) to get this working. The code calling this CustomVision API is as simple as [this](https://github.com/keesschollaart81/Home-Assistant-Backend/blob/master/src/Function/MotionService.cs#L98-L106):
+Now we can use this trained model to detect objects in (new) images using their API. I've implemented the backend in C# therfor I interact with this API using their SDK available as a NuGet package: [Microsoft.Azure.CognitiveServices.Vision.CustomVision.Prediction](https://www.nuget.org/packages/Microsoft.Azure.CognitiveServices.Vision.CustomVision.Prediction/). I used [step 6 of this HowTo](https://docs.microsoft.com/en-us/azure/cognitive-services/custom-vision-service/csharp-tutorial-od#step-6-get-and-use-the-default-prediction-endpoint) to get this working. The code calling this CustomVision API is as simple as [this](https://github.com/keesschollaart81/Home-Assistant-Backend/blob/master/src/Function/MotionService.cs#L98-L106):
 
-``` csharp
+~~~ cs
 var endpoint = new PredictionEndpoint() { ApiKey = _config.PredictionKey };
 var predictionResult = await endpoint.PredictImageAsync(new Guid(_config.ProjectId), stream);
 
@@ -125,7 +125,7 @@ foreach (var c in predictionResult.Predictions)
 }
 
 var meaningfulPredictions = predictionResult.Predictions.Where(x => x.Probability > 0.15);
-```
+~~~
 
 After images are send to CustomVision.ai these predictions can be monitored. Each result can be turned into a new test sample in order to train the model even better.
 

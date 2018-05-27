@@ -167,13 +167,20 @@ a {
     color: black;
     font-family: 'Slabo 27px', serif;
     font-size: 20px;
-    margin-left: -27px;
+    margin-left: -32px;
 }
 #content h2::before {
     content: "♦";
     padding-right: 15px;
     color: black;
     font-size: 24px;
+}
+#content h3 {
+    padding: 0;
+    margin: 20px 0 5px 0;
+    color: #00047D;
+    font-family: 'Slabo 27px', serif;
+    font-size: 18px;
 }
 #content .subtitle {
     margin: 0 0 30px 0;
