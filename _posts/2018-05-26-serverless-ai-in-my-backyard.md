@@ -12,11 +12,11 @@ Recently I added some cool stuff to my home automation platform using computer v
 
 ## The 'problem'
 
-When you have kids, you know: they leave doors open. In this case, the gate in the fence. This does not have to be a big problem, except when there are bike's unlocked in the backyard, we don't want them to be stolen! 
+When you have kids, you know they leave doors open. In this case, the gate in the fence. This does not have to be a big problem, except when there are bikes unlocked in the backyard, we don't want them to be stolen! 
 
 I have a Home Automation platform running, but I don't want to equip my bikes with sensors. I also don't want to put sensors on this wooden gate in my fence. 
 
-How can I monitor this situation and being alerted when this occurs?
+How can I monitor this situation and be alerted when this happens?
 
 <img src="/img/2018/the-problem.jpeg"/>
 
@@ -95,7 +95,7 @@ I did some extra stuff in this codebase, but if you want, this could easily be w
 
 ## CustomVision.ai
 
-CustomVision.ai makes it really easy to train an AI model to detect objects in an image. It starts with training, you have to provide some example images where you set what the objects, you're searching for, look like. In my case I trained the service to detect the following 'tags':
+CustomVision.ai makes it really easy to train an AI model to detect objects in an image. It starts with training. You have to provide some example images where you set what the objects, you're searching for, look like. In my case I trained the service to detect the following 'tags':
 
  - Gate open
  - Gate closed
@@ -143,7 +143,7 @@ Sometimes the detection makes mistakes, like this:
 
 <a id="single_image" href="/img/2018/not-bike-jasmijn.png" class="fancybox" rel="notbikejasmijn"><img src="/img/2018/not-bike-jasmijn-thumb.png"/></a>
 
-In my experience this almost never happens. Every evening, I take some time to (by hand) process about 50 images of the day to train the model even further. In this example Jasmijns bike was visible, but in a new 'rotation' (steer to the right) which was unknown up to that point. It will require time to train the model in order to increase the accuracy. I now have ±400 training images an can say that its 97% accurate.
+In my experience this almost never happens. Every evening, I take some time to (by hand) process about 50 images of the day to train the model even further. In this example Jasmijns bike was visible, but in a new 'rotation' (steer to the right) which was unknown up to that point. It will require time to train the model in order to increase the accuracy. I now have ±400 training images an can say that it's 97% accurate.
 
 ## Costs
 
