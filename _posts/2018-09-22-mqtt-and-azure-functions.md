@@ -45,7 +45,7 @@ In your Azure Functions project reference the [CaseOnline.Azure.WebJobs.Extensio
 
 Below a simple example, receicing messages for topic ```my/topic/in``` and publishing messages on topic ```testtopic/out```.
 
-``` csharp
+~~~ cs
 public static class ExampleFunctions
 {
     [FunctionName("SimpleFunction")]
@@ -60,7 +60,7 @@ public static class ExampleFunctions
         outMessage = new MqttMessage("testtopic/out", new byte[] { }, MqttQualityOfServiceLevel.AtLeastOnce, true);
     }
 }
-```
+~~~
 
 But there is much more to say, checkout these pages in the Wiki:
 
