@@ -75,12 +75,15 @@ Next to that, this extension uses the [Managed Client](https://github.com/chkr10
 ## More info
 
 Check the GitHub repository for more info:
+
 > https://github.com/keesschollaart81/
 
 Download the NuGet package:
+
 > https://www.nuget.org/packages/CaseOnline.Azure.WebJobs.Extensions.Mqtt/
 
 Share you love with the developers who did the hard work: '**Star**' the MQTTNet Repository:
+
 > https://github.com/chkr1011/MQTTnet/
 
 Checkout these pages in the Wiki:
