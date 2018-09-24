@@ -82,7 +82,7 @@ Download the NuGet package:
 
 * [https://www.nuget.org/packages/CaseOnline.Azure.WebJobs.Extensions.Mqtt/](https://www.nuget.org/packages/CaseOnline.Azure.WebJobs.Extensions.Mqtt/)
 
-Share you love with the developers who did the hard work: '**Star**' the MQTTNet Repository:
+Share your love with the developers who did the hard work: '**Star**' the MQTTNet Repository:
 
 * [https://github.com/chkr1011/MQTTnet/](https://github.com/chkr1011/MQTTnet/)
 
