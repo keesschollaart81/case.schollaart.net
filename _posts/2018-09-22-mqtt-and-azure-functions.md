@@ -35,7 +35,7 @@ I build the MQTT trigger and output bindings for Azure Functions v2. It's open s
 <a id="single_image" href="/img/2018/mqtt_and_azure_functions_diagram.png" class="fancybox" rel="mqtt-azure-functions-diagram"><img src="/img/2018/mqtt_and_azure_functions_diagram_thumb.png"/></a>
 </center>
 
-When you Function App starts (after deployment) the host will detect this extension. The extension will discover the functions with MQTT triggers, for each trigger a subscription will be created to the MQTT server. The extension will also maintain the open connection with the MQTT server. 
+When your Function App host starts, the host will detect this extension. The extension will discover the functions with MQTT triggers, for each trigger a subscription will be created to the MQTT broker. The extension will also maintain the open connection with the MQTT broker. 
 
 This extension heavily depends upon the great work of [Christian Kratky's](https://twitter.com/chkratky) '[MQTTNet](https://github.com/chkr1011/MQTTnet/)'. This is a .NET Standard implementation of a MQTT.  
 
@@ -45,7 +45,7 @@ In your Azure Functions project reference the [CaseOnline.Azure.WebJobs.Extensio
 
 Below a simple example, receicing messages for topic ```my/topic/in``` and publishing messages on topic ```testtopic/out```.
 
-``` csharp
+~~~ cs
 public static class ExampleFunctions
 {
     [FunctionName("SimpleFunction")]
@@ -60,7 +60,7 @@ public static class ExampleFunctions
         outMessage = new MqttMessage("testtopic/out", new byte[] { }, MqttQualityOfServiceLevel.AtLeastOnce, true);
     }
 }
-```
+~~~
 
 ## Resiliency
 
