@@ -17,7 +17,7 @@ I've build an Azure Functions extension which enables you to subscribe an publis
 
 ##  Why
 
-For multiple reasons MQTT [gained a lot of popularity](https://trends.google.nl/trends/explore?date=today%205-y&q=%2Fm%2F0h5619c,%2Fm%2F09rsvzj,%2Fm%2F0dyn96) in the last couple of years. If you are interested in what MQTT is, I think [this blogpost explains it very well](https://devopedia.org/mqtt). MQTT is used in the IoT domain a lot, I felt in love with it, when I started to use it as part of my [Home Automation](/2018/05/26/serverless-ai-in-my-backyard.html).
+For multiple reasons MQTT [gained a lot of popularity](https://trends.google.nl/trends/explore?date=today%205-y&q=%2Fm%2F0h5619c,%2Fm%2F09rsvzj,%2Fm%2F0dyn96) in the last couple of years. If you are interested in what MQTT is, I think [this blogpost explains it very well](https://devopedia.org/mqtt). MQTT is used in the IoT domain a lot, I felt in love with it, when I started to use it as part of my [Home Automation](/2018/05/26/serverless-ai-in-my-backyard.html). So I'm fan because of the ease of use, the lightweight footprint and the broad support of technology-stacks.
 
 I thought that MQTT would fit very well with the serverless patterns. In my first use case, I wanted to run some serverless code in the cloud when a message got published on a MQTT topic. Next to that, I quickly wanted to be able to publish messages as well. 
 
@@ -62,7 +62,28 @@ public static class ExampleFunctions
 }
 ~~~
 
-I've also written a lot of guidance on how to use this extension, checkout these pages in the Wiki:
+## Resiliency
+
+If you use the Azure Functions Consumption plan, the host will be terminated after 10 minutes of inactivity. Then also the open connection will be disconnected. Therefor: **don't use the Consumption Plan** when you use triggers. 
+
+Next to that, this extension uses the [Managed Client](https://github.com/chkr1011/MQTTnet/wiki/ManagedClient) of the MQTT Client. This means:
+
+* The managed client is started once and will maintain the connection automatically including reconnecting etc.
+* All MQTT application messages are added to an internal queue and processed once the server is available.
+* All subscriptions are managed across server connections. There is no need to subscribe manually after the connection with the server is lost.
+
+## More info
+
+Check the GitHub repository for more info:
+> https://github.com/keesschollaart81/
+
+Download the NuGet package:
+> https://www.nuget.org/packages/CaseOnline.Azure.WebJobs.Extensions.Mqtt/
+
+Share you love with the developers who did the hard work: '**Star**' the MQTTNet Repository:
+> https://github.com/chkr1011/MQTTnet/
+
+Checkout these pages in the Wiki:
 
 * [Getting Started](https://github.com/keesschollaart81/CaseOnline.Azure.WebJobs.Extensions.Mqtt/wiki/Getting-started)
 * [Publish via output](https://github.com/keesschollaart81/CaseOnline.Azure.WebJobs.Extensions.Mqtt/wiki/Publish-via-output)
