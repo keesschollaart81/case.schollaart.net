@@ -1,9 +1,6 @@
 paginate: 5
 excerpt_separator: <!--more-->
+gems:      ["jekyll-paginate", "kramdown", "jekyll-sitemap"]  
 encoding: utf-8 
 markdown: kramdown
-url: "http://case.schollaart.net"  
-plugins: 
-  - "jekyll-paginate"
-  - "kramdown"
-  - "jekyll-sitemap"
+url: "http://case.schollaart.net"
