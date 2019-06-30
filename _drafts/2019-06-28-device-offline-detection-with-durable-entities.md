@@ -38,13 +38,82 @@ Not every device is the same, especially if the backend has to work for devices 
 
 ## Durable Entities to the rescue!
 
+A solution to this challenge is to use Azure Durable Functions. Durable Functions are an extension of Azure Functions that lets you write stateful functions in a serverless environment. The extension manages state, checkpoints, and restarts for you. The rest of this post assumes basic understanding of [Durable Functions](https://docs.microsoft.com/en-us/azure/azure-functions/durable/durable-functions-overview).
+
+[Durable Entities](https://docs.microsoft.com/nl-nl/azure/azure-functions/durable/durable-functions-preview#entity-functions) is a recent addition to the Durable Functions framework (2.0 and later) and enables work with small pieces of state. This feature is heavily inspired by the Actor Model which you might know from [Akka.net](https://getakka.net/articles/intro/what-problems-does-actor-model-solve.html), [project Orleans](https://www.microsoft.com/en-us/research/project/orleans-virtual-actors/) or [Service Fabric Reliable Actors](https://docs.microsoft.com/en-us/azure/service-fabric/service-fabric-reliable-actors-introduction). 
+
+This implementation for our device offline detection can be visualized in a sequence diagram like this:
+
+<img src="https://www.websequencediagrams.com/cgi-bin/cdraw?lz=dGl0bGUgT2ZmbGluZSBEZXRlY3Rpb24KCkV2ZW50U291cmNlLT4rRnVuABMFOiBGaXJzdCBvciBkZWxheWVkIG1lc3NhZ2UKABsILT5EdXJhYmxlRnJhbWV3b3JrOiBOZXcgT3JjaGVzdHJhdG9yIAAjCy0AXws6CgAsEC0-KisALgwARwUKAEAMLT4qRW50aXR5OiBDcmVhdGUADw8AFQhVcGRhdGUgTGFzdENvbW11bmljYXRpb25EYXRlVGltACcQU3RhdHVzTm90aWZpZXI6IE9ubGluAEwQLQCBWRJXYWl0IGZvciB4CiNub3RlIHJpZ2h0IG9mIEJvYjogQm9iIHRoaW5rcyBhYm91dCBpdCAKIAogCgphbHQgTm8AgkYJAIF3EgCBeQ9UaW1lb3V0RXhjZXAAgy4FAIFaHXN0YXRlIHRvIG8Ag2UGAIE5EACBXhEAIAdlbHNlIE5vcm1hbACDehkAGQYAhAEIAINQDACDeBJSYWlzZQCEVwVBc3luYyAAg14sAIN6D1dha2UgdXAgJiBjb250aW51ZSEgAIM2RgCESAhHZXQgQ3VycmVudCBTdACEShEAhBMSAIQqBXkAhCUHICh3aGVuIGMAOgcAgnwGaXMAgnoIKQCEKiJDAIFRByBhcwCGPgUgCmVuZCAgCg&s=napkin"/>
+
+### The Function
+
+For every incoming message we check if there is already an orchestrator running/waiting. This lookup is by ID and in our example we used the device ID as the ID for the orchestrator. 
+
+```cs
+var status = await durableOrchestrationClient.GetStatusAsync(args.DeviceId);
+
+switch (status?.RuntimeStatus)
+{
+    case OrchestrationRuntimeStatus.Running:
+    case OrchestrationRuntimeStatus.Pending:
+    case OrchestrationRuntimeStatus.ContinuedAsNew:
+        await durableOrchestrationClient.RaiseEventAsync(args.DeviceId, "MessageReceived", null);
+        break;
+    default:
+        await durableOrchestrationClient.StartNewAsync(nameof(WaitingOrchestrator), args.DeviceId, new OrchestratorArgs { DeviceId = args.DeviceId });
+        break;
+}
+```
+
+If there is already a running orchestrator, this orchestrator is notified that there is a new message. The framework will (in a asynchronous manner) wakeup the this orchestrator.
+
+### The Orchestrator
+
+The first time an orchestrator is started, it will create the Durable Entity, then it will fetch the properties of this particular device.
+
+```cs 
+var entity = new EntityId(nameof(DeviceEntity), orchestratorArgs.DeviceId);
+
+var offlineAfter = await ctx.CallEntityAsync<TimeSpan>(entity, "GetOfflineAfter");
+var lastActivity = await ctx.CallEntityAsync<DateTime?>(entity, "GetLastMessageReceived");
+```
+
+Then the orchestrator will do a `WaitForExternalEvent` for a certain amount of time. The Durable Functions framework will 'kill' the thread. The orchestrator will be revived when this event is triggered or the timeout period has elapsed.  
+
+```cs
+try
+{ 
+    await ctx.WaitForExternalEvent("MessageReceived", offlineAfter); 
+    log.LogInformation($"Message received for device {orchestratorArgs.DeviceId}, resetting timeout of {offlineAfter.TotalSeconds} seconds offline detection..."); 
+    ctx.ContinueAsNew(orchestratorArgs);
+    return;
+}
+catch (TimeoutException)
+{
+    await ctx.CallActivityAsync(nameof(SendStatusUpdate), new StatusUpdateArgs(orchestratorArgs.DeviceId, false));
+    return;
+}
+```
+When the offline detection timeout has been reached, a `TimeoutException` will be thrown, then we call the `SendStatusUpdate` activity function. When the `MessageReceived` event is raised, `ctx.ContinueAsNew` is called whichs will 'bring back' the orchestrator to it's next iteration/state. As long as the device is online, this orchestrator is considered to live forever.
+
+### The Entity
 
 
 
 ## Yes, but have you tought about...
- 
+
+### CosmosDb
+
+
 ### Stream Analytics
 
 
 ### Durable Functions 1.x
+
+
+## Performance
+
+ 
+## Conclusion
 
