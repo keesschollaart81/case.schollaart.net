@@ -3,14 +3,8 @@
 {% include head.md %}
 <body>
     <div id="container">
-
-		{% include side.md %}
-        
+ 
         <div id="content">
-           
-                <div id="homebutton">
-                    <a href="/"><span class="glyphicon glyphicon-home"></span></a>
-                </div> 
 				
 				{{ content }} 
         </div>

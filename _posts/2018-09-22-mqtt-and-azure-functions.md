@@ -2,8 +2,8 @@
 layout: post
 title: "MQTT and Azure Functions"
 author: "Kees Schollaart" 
-backgroundUrl: /img/2018/back6.jpg
-comments: true 
+backgroundUrl: /img/2018/back6.jpg 
+pageThemeColor: "#5c4800"
 ---  
 
 I've build an Azure Functions extension which enables you to subscribe an publish to MQTT topics.

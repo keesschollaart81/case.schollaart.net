@@ -3,7 +3,7 @@ layout: post
 title: "Office 365 Migration Api using C#"
 author: "Kees Schollaart" 
 backgroundUrl: /img/migration.jpg
-comments: true 
+pageThemeColor: "#030059"
 ---  
 
 This blogpost describes how to use the Office 365 Migration Api using your own C# code. 

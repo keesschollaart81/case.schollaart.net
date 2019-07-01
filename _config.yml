@@ -1,4 +1,4 @@
-paginate: 5
+paginate: 15
 excerpt_separator: <!--more-->
 gems:      ["jekyll-paginate", "kramdown", "jekyll-sitemap"]  
 encoding: utf-8 

@@ -3,6 +3,7 @@ layout: post
 title: "Device Offline detection with Durable Entities"
 author: "Kees Schollaart" 
 backgroundUrl: /img/2019/back5.jpg
+pageThemeColor: "#2e0000"
 comments: true 
 ---  
 

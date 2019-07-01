@@ -1,4 +1,4 @@
-<div id="side">
+<!-- <div id="side">
     <a href="/" id="myface" title="Profile Picture Kees Schollaart" alt="Profile Picture Kees Schollaart">
         <img src="/img/kees.jpg" alt="Site Name" />
     </a>
@@ -13,4 +13,4 @@
             <li><a href="http://www.emailmeform.com/builder/form/6cNG0B3bIfEp232ftoKR2zO7" target="_blank"><i class="fa fa-envelope-square"></i><br />contact</a></li>
         </ul>
     </div>
-</div>
+</div> -->

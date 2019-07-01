@@ -2,8 +2,7 @@
 layout: post
 title: "Deploy your Azure Functions using Visual Studio Team Services"
 author: "Kees Schollaart" 
-backgroundUrl: /img/deploy.jpg
-comments: true 
+backgroundUrl: /img/deploy.jpg 
 ---  
 
 [Azure Functions](https://azure.microsoft.com/en-us/services/functions/) have been around for a couple of months now and I start using them more and more. Recently I wanted to deploy my Azure Function as part of a CI/CD flow in Visual Studio Team Services (VSTS) Release Management. I'd like to share how I did this.

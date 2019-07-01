@@ -3,7 +3,7 @@ layout: post
 title: "Serverless AI in my backyard"
 author: "Kees Schollaart" 
 backgroundUrl: /img/2018/back5.jpg
-comments: true 
+pageThemeColor: "#00590d"  
 ---  
 
 Recently I added some cool stuff to my home automation platform using computer vision, serverless code and MQTT.
@@ -42,7 +42,7 @@ The solution consists of four major pieces:
 
 The camera publishes messages to a MQTT topic when motion is detected. These 'motion-detected' messages are published on the MQTT Broker inside of Home Assistant. An Azure Function is subscribed to this topic: it gets the current picture of the camera and pushes this image to the Custom Vision api. This Custom Vision is trained by me and knows what an open gate and a bike looks like. The result is parsed in the Azure Function and then published back to the MQTT broker. In Home Assistant a sensor is configured to listen to this result and with that, I can do all sorts of cool stuff with these values inside of Home Assistant.
 
-<iframe width="100%" height="500" src="https://www.youtube.com/embed/BZbChsi4xyA" frameborder="0" allow="autoplay; encrypted-media" allowfullscreen style="width:100%"></iframe>
+<iframe width="100%" height="730" src="https://www.youtube.com/embed/BZbChsi4xyA" frameborder="0" allow="autoplay; encrypted-media" allowfullscreen style="width:100%"></iframe>
 
 ## The hardware
 

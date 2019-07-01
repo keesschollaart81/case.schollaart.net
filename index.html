@@ -2,27 +2,45 @@
 layout : layout
 title : case.schollaart.net
 Homebutton: false
---- 
-
+---
+<img src="/img/kees.jpg" id="ik"/>
 <h1>Blog of Kees Schollaart</h1>
-<div class="subtitle">http://case.schollaart.net/</div>
-<p>
-    Hi there! I'd love to code C# and thats what I blog about!<br /><br />
+<br />
+<div class="subtitle">
+	Technical Evangelist @ Microsoft
+	<a href="https://nl.linkedin.com/in/keesschollaart" target="_blank"><i class="fa fa-linkedin-square"></i></a>
+	<a href="https://github.com/keesschollaart81" target="_blank"><i class="fa fa-github-square"></i></a>
+	<a href="https://twitter.com/keesschollaart" target="_blank"><i class="fa fa-twitter-square"></i></a>
+	<a href="http://www.emailmeform.com/builder/form/6cNG0B3bIfEp232ftoKR2zO7" target="_blank"><i
+			class="fa fa-envelope-square"></i></a>
+</div>
 
-    Recent posts:
-</p>
-
-<div class="posts"> 
-	{% for post in paginator.posts %} 
-		<div class="post">
-			<a class="contentTitle" href="{{ post.url }}" title="{{ post.title }}">{{ post.title }}</a>
-			<div class="contentDate">{{ post.date | date: "%B %d, %Y" }}</div>
-			<div class="content">
-				{{ post.excerpt }}
-				{% if post.content contains site.excerpt_separator %}
-				<a href="{{ post.url | prepend: site.baseurl }}" class="readMore"><span class="glyphicon glyphicon-chevron-right"></span> Read more</a>
+<div class="posts">
+	{% for post in paginator.posts %}
+	<div class="post">
+		<div class="contentDate">{{ post.date | date: "%B %d, %Y" }}</div>
+		<a class="contentTitle" href="{{ post.url }}" title="{{ post.title }}">{{ post.title }}</a>
+		<div class="content">
+			{{ post.excerpt }}
+			{% if post.content contains site.excerpt_separator %}
+			<a href="{{ post.url | prepend: site.baseurl }}" class="readMore"><span
+					class="glyphicon glyphicon-chevron-right"></span> Read more</a>
 			{% endif %}
-			</div>
-		</div> 
-	{% endfor %} 
+		</div>
+	</div>
+	{% endfor %}
+</div>
+
+<div class="pagination">
+	{% if paginator.previous_page %}
+	<a href="{{ paginator.previous_page_path }}" class="previous">
+		< Previous
+	</a> 
+	{% endif %}
+	<span class="page_number ">
+		Page: {{ paginator.page }} of {{ paginator.total_pages }}
+	</span>
+	{% if paginator.next_page %}
+	<a href="{{ paginator.next_page_path }}" class="next">Next ></a>
+	{% endif %}
 </div>

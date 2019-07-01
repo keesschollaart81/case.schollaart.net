@@ -3,7 +3,7 @@ layout: post
 title: ".NET Core 2.0 (ARM) on your Raspberry Pi with Azure IoT Hub"
 author: "Kees Schollaart" 
 backgroundUrl: /img/back4.jpg
-comments: true 
+pageThemeColor: "#030059"  
 ---  
 
 In this post I'll describe how you connect you're Raspberry Pi 3 to Azure IoT Hub using .NET Core.

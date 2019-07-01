@@ -28,6 +28,16 @@
 		{% else %}
 			$.backstretch('{{page.backgroundUrl}}', { fade: 2000});
 		{% endif %}
+
+		{% if page.pageThemeColor != null %} 
+			$("h1").css("color",'{{page.pageThemeColor}}');
+			$("h2").css("color",'{{page.pageThemeColor}}');
+			$("h3").css("color",'{{page.pageThemeColor}}');
+			$(".pageThemeColor").css("color",'{{page.pageThemeColor}}');
+			$("#postBody a").css("color",'{{page.pageThemeColor}}'); 
+			
+		{% endif %}
+		
 		
 		$("a.fancybox").fancybox();
     }); 
