@@ -12,13 +12,13 @@ How to detect the absense of device messages in a scalable, distributed and cost
 
 ## The Desire
 
-If you maintain the backend of an IoT device it's very likely that you would like to have a 'Offline Detection' capbility. Most devices send messages to the cloud with certain frequency, for example a heartbeat message. If you don't get any messages, at some point you know... It's offline! 
+If you maintain the backend of an IoT device it's very likely that you would like to have a 'Offline Detection' capability. Most devices send messages to the cloud with a known frequency, for example a heartbeat message. If you don't get any messages for more than x minutes, you know... It's offline! 
 
-This post describes one way of building this Offline Detection capability. In a very scalable and cost effective way using cloud native technologies on the Microsoft Azure cloud.
+This post describes one way of building this Offline Detection capability. In a very scalable and cost-effective way using cloud native technologies on the Microsoft Azure cloud.
  
 ##  The Challenges
 
-Altough is might sound quite trivial, doing it at a scale of more than 100 messages per second (even up to 100.000 per second) brings quite some challenges. For example... This blogpost assumes 1.000.000 connected devices that ingest 1 message every 10 minutes (±1.000 p/s) via Azure EventHub, IoT-Hub or an Azure Storage Queue. 
+Altough it might sound quite trivial, but if you continue to add zero's to the requirements it becomes less and less trivial. This blogpost assumes 1.000.000 connected devices that ingest 1 message every 10 minutes (±1.000 p/s) via Azure EventGrid, Azure EventHub, IoT-Hub or an Azure Storage Queue. With these numbers, you start to run into challenges, for example...
 
 ### No entry point
 
