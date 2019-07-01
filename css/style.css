@@ -44,7 +44,7 @@ a {
 #content h1 {
     padding: 15px;
     display: inline-block;
-    margin: 111px 0 0 0;
+    margin: 110px 0 0 0;
     color: black;
     background-color: white;
     font-family: 'Slabo 13px', serif;
@@ -167,6 +167,9 @@ pre.highlight code{
     padding-bottom: 20px;
 }
 
+.highlighter-rouge{
+    font-size: 80%;
+}
 @media all and (max-width: 800px) {
     #ik{
         display: none;
