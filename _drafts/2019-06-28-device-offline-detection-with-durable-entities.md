@@ -20,27 +20,27 @@ This post describes one way of building this Offline Detection capability. In a 
 
 Altough it might sound quite trivial, but if you continue to add zero's to the requirements it becomes less and less trivial. This blogpost assumes 1.000.000 connected devices that ingest 1 message every 10 minutes (±1.000 p/s) via Azure EventGrid, Azure EventHub, IoT-Hub or an Azure Storage Queue. With these numbers, you start to run into challenges, for example...
 
-### No entry point
+### No message is no trigger
 
-Some time after the last received message, we want to run code that triggers the offine-event. We need to have a way to trigger this without a running thread per device. 
+Some time after the last received message, we want to run code that triggers the offine-event. A trigger needs to start code after some time, we don't want to manage all the timers/threads for all these devices. 
 
 ### Distributed state
 
-To be scalable we would like to be stateless, Device Offline detection however is a stetful operation. How can we make this work on a scalable infrastructure where different messages can end up on different nodes. A distributed state is quite expensive in terms of both software complexity and IO. IO is also limiting scalability because of locks and at least 1 write and 1 read operation per message to deal with the state (last message received at). 
+To be scalable we would like to be stateless, Device Offline detection however is a stateful operation. How can we make this work on a scalable infrastructure where different messages can end up on different nodes. A distributed state is quite expensive in terms of both software complexity and IO. IO is also limiting scalability because of locks and at least 1 write and 1 read operation per message to deal with the state (last message received at). 
 
 ### Disaster recovery
 
-What if suddenly all devices disconnect and/or reconnect? This will cause a enormous peak in the offline detection logic. Because of this, both the backing-storage and the compute host need to be able to deal with these sudded peaks. Wthen the detection logic get's overwealmed by a peak of messages or because it was offline for a but during an update, it needs to compensate for that 'processing-latency' as well.
+What if suddenly all devices disconnect and/or reconnect? This will cause an enormous peak in the offline detection logic. Because of this, both the backing-storage and the compute host need to be able to deal with sudden load. When the detection logic get's overwealmed, by a peak of messages or because it was offline during an update, it needs to deal with this 'delayed-processing' as well.
 
 ### Devicetype specific behaviour
 
-Not every device is the same, especially if the backend has to work for devices from different manufacturers. The timeout to work with will be different per device. 
+Not every device is the same, especially if the backend has to work for devices from different manufacturers. The timeout has to be different per device. 
 
 ## Durable Entities to the rescue!
 
 A solution to this challenge is to use Azure Durable Functions. Durable Functions are an extension of Azure Functions that lets you write stateful functions in a serverless environment. The extension manages state, checkpoints, and restarts for you. The rest of this post assumes basic understanding of [Durable Functions](https://docs.microsoft.com/en-us/azure/azure-functions/durable/durable-functions-overview).
 
-[Durable Entities](https://docs.microsoft.com/nl-nl/azure/azure-functions/durable/durable-functions-preview#entity-functions) is a recent addition to the Durable Functions framework (2.0 and later) and enables work with small pieces of state. This feature is heavily inspired by the Actor Model which you might know from [Akka.net](https://getakka.net/articles/intro/what-problems-does-actor-model-solve.html), [project Orleans](https://www.microsoft.com/en-us/research/project/orleans-virtual-actors/) or [Service Fabric Reliable Actors](https://docs.microsoft.com/en-us/azure/service-fabric/service-fabric-reliable-actors-introduction). 
+[Durable Entities](https://docs.microsoft.com/nl-nl/azure/azure-functions/durable/durable-functions-preview#entity-functions) is a recent addition to the Durable Functions framework (2.0 and later) and enables you to work with small pieces of state. This feature is heavily inspired by the Actor Model which you might know from [Akka.net](https://getakka.net/articles/intro/what-problems-does-actor-model-solve.html), [project Orleans](https://www.microsoft.com/en-us/research/project/orleans-virtual-actors/) or [Service Fabric Reliable Actors](https://docs.microsoft.com/en-us/azure/service-fabric/service-fabric-reliable-actors-introduction). 
 
 This implementation for our device offline detection can be visualized in a sequence diagram like this:
 
@@ -74,13 +74,13 @@ public static async Task<IActionResult> HttpTrigger(
 }
 ```
 
-If there is already a running orchestrator, this orchestrator is notified that there is a new message. The framework will (in a asynchronous manner) wakeup the this orchestrator.
+If there is already a running orchestrator, this running orchestrator is notified that there is a new message. The framework will (in a asynchronous manner) wakeup the this orchestrator.
 
 ### The Orchestrator
 
 The first time an orchestrator is started, it will create the Durable Entity, then it will fetch the properties of this particular device.
 
-Then the orchestrator will do a `WaitForExternalEvent` for a certain amount of time. The Durable Functions framework will 'kill' the thread. The orchestrator will be revived when this event is triggered or the timeout period has elapsed.  
+Then the orchestrator will do a `WaitForExternalEvent` for the given time(out). While it's waiting, the Durable Functions framework will 'kill' the thread. The orchestrator thread will be revived when this event is triggered or the timeout period has elapsed.  
 
 ```cs
 [FunctionName(nameof(WaitingOrchestrator))]
