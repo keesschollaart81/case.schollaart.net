@@ -18,7 +18,7 @@ This post describes one way of building this Offline Detection capability. In a 
  
 ##  The Challenges
 
-Altough is might sound quite trivial, doing it at a scale of more than 100 messages per second (even up to 100.000 per second) brings quite some challenges. For example... This blogpost assumes 1.000.000 connected devices that ingest 1 message every minute (±17k p/s) via Azure EventHub, IoT-Hub or an Azure Storage Queue. 
+Altough is might sound quite trivial, doing it at a scale of more than 100 messages per second (even up to 100.000 per second) brings quite some challenges. For example... This blogpost assumes 1.000.000 connected devices that ingest 1 message every 10 minutes (±1.000 p/s) via Azure EventHub, IoT-Hub or an Azure Storage Queue. 
 
 ### No entry point
 
@@ -44,25 +44,33 @@ A solution to this challenge is to use Azure Durable Functions. Durable Function
 
 This implementation for our device offline detection can be visualized in a sequence diagram like this:
 
-<img src="https://www.websequencediagrams.com/cgi-bin/cdraw?lz=dGl0bGUgT2ZmbGluZSBEZXRlY3Rpb24KCkV2ZW50U291cmNlLT4rRnVuABMFOiBGaXJzdCBvciBkZWxheWVkIG1lc3NhZ2UKABsILT5EdXJhYmxlRnJhbWV3b3JrOiBOZXcgT3JjaGVzdHJhdG9yIAAjCy0AXws6CgAsEC0-KisALgwARwUKAEAMLT4qRW50aXR5OiBDcmVhdGUADw8AFQhVcGRhdGUgTGFzdENvbW11bmljYXRpb25EYXRlVGltACcQU3RhdHVzTm90aWZpZXI6IE9ubGluAEwQLQCBWRJXYWl0IGZvciB4CiNub3RlIHJpZ2h0IG9mIEJvYjogQm9iIHRoaW5rcyBhYm91dCBpdCAKIAogCgphbHQgTm8AgkYJAIF3EgCBeQ9UaW1lb3V0RXhjZXAAgy4FAIFaHXN0YXRlIHRvIG8Ag2UGAIE5EACBXhEAIAdlbHNlIE5vcm1hbACDehkAGQYAhAEIAINQDACDeBJSYWlzZQCEVwVBc3luYyAAg14sAIN6D1dha2UgdXAgJiBjb250aW51ZSEgAIM2RgCESAhHZXQgQ3VycmVudCBTdACEShEAhBMSAIQqBXkAhCUHICh3aGVuIGMAOgcAgnwGaXMAgnoIKQCEKiJDAIFRByBhcwCGPgUgCmVuZCAgCg&s=napkin"/>
+<a id="single_image" href="/img/2019/sequence.png" class="fancybox" rel="seq"><img src="/img/2019/sequence-thumb.png" style="border:1px solid black;"/></a> 
 
 ### The Function
 
 For every incoming message we check if there is already an orchestrator running/waiting. This lookup is by ID and in our example we used the device ID as the ID for the orchestrator. 
 
 ```cs
-var status = await durableOrchestrationClient.GetStatusAsync(args.DeviceId);
-
-switch (status?.RuntimeStatus)
+[FunctionName(nameof(HttpTrigger))]
+public static async Task<IActionResult> HttpTrigger(
+    [HttpTrigger(AuthorizationLevel.Anonymous, "get")] HttpTriggerArgs args,
+    [OrchestrationClient] IDurableOrchestrationClient durableOrchestrationClient,
+    ILogger log)
 {
-    case OrchestrationRuntimeStatus.Running:
-    case OrchestrationRuntimeStatus.Pending:
-    case OrchestrationRuntimeStatus.ContinuedAsNew:
-        await durableOrchestrationClient.RaiseEventAsync(args.DeviceId, "MessageReceived", null);
-        break;
-    default:
-        await durableOrchestrationClient.StartNewAsync(nameof(WaitingOrchestrator), args.DeviceId, new OrchestratorArgs { DeviceId = args.DeviceId });
-        break;
+    var status = await durableOrchestrationClient.GetStatusAsync(args.DeviceId);
+
+    switch (status?.RuntimeStatus)
+    {
+        case OrchestrationRuntimeStatus.Running:
+        case OrchestrationRuntimeStatus.Pending:
+        case OrchestrationRuntimeStatus.ContinuedAsNew:
+            await durableOrchestrationClient.RaiseEventAsync(args.DeviceId, "MessageReceived", null);
+            break;
+        default:
+            await durableOrchestrationClient.StartNewAsync(nameof(WaitingOrchestrator), args.DeviceId, new OrchestratorArgs { DeviceId = args.DeviceId });
+            break;
+    }
+    return new OkResult();
 }
 ```
 
@@ -72,27 +80,33 @@ If there is already a running orchestrator, this orchestrator is notified that t
 
 The first time an orchestrator is started, it will create the Durable Entity, then it will fetch the properties of this particular device.
 
-```cs 
-var entity = new EntityId(nameof(DeviceEntity), orchestratorArgs.DeviceId);
-
-var offlineAfter = await ctx.CallEntityAsync<TimeSpan>(entity, "GetOfflineAfter");
-var lastActivity = await ctx.CallEntityAsync<DateTime?>(entity, "GetLastMessageReceived");
-```
-
 Then the orchestrator will do a `WaitForExternalEvent` for a certain amount of time. The Durable Functions framework will 'kill' the thread. The orchestrator will be revived when this event is triggered or the timeout period has elapsed.  
 
 ```cs
-try
-{ 
-    await ctx.WaitForExternalEvent("MessageReceived", offlineAfter); 
-    log.LogInformation($"Message received for device {orchestratorArgs.DeviceId}, resetting timeout of {offlineAfter.TotalSeconds} seconds offline detection..."); 
-    ctx.ContinueAsNew(orchestratorArgs);
-    return;
-}
-catch (TimeoutException)
+[FunctionName(nameof(WaitingOrchestrator))]
+public static async Task WaitingOrchestrator(
+    [OrchestrationTrigger] IDurableOrchestrationContext ctx,
+    ILogger log)
 {
-    await ctx.CallActivityAsync(nameof(SendStatusUpdate), new StatusUpdateArgs(orchestratorArgs.DeviceId, false));
-    return;
+    var orchestratorArgs = ctx.GetInput<OrchestratorArgs>();
+
+    var entity = new EntityId(nameof(DeviceEntity), orchestratorArgs.DeviceId);
+
+    var offlineAfter = await ctx.CallEntityAsync<TimeSpan>(entity, "GetOfflineAfter");
+    var lastActivity = await ctx.CallEntityAsync<DateTime?>(entity, "GetLastMessageReceived");
+    try
+    { 
+        await ctx.WaitForExternalEvent("MessageReceived", offlineAfter); 
+        log.LogInformation($"Message received, resetting timeout!"); 
+        ctx.ContinueAsNew(orchestratorArgs);
+        return;
+    }
+    catch (TimeoutException)
+    {
+        await ctx.CallActivityAsync(nameof(SendStatusUpdate), new StatusUpdateArgs(orchestratorArgs.DeviceId, false));
+        log.LogInformation($"No message received, orchestrator will terminate"); 
+        return;
+    }
 }
 ```
 When the offline detection timeout has been reached, a `TimeoutException` will be thrown, then we call the `SendStatusUpdate` activity function. When the `MessageReceived` event is raised, `ctx.ContinueAsNew` is called whichs will 'bring back' the orchestrator to it's next iteration/state. As long as the device is online, this orchestrator is considered to live forever.
@@ -188,7 +202,13 @@ So the first run of the Orchestrator, we use an Activity Function called `GetOff
 
 ## Performance
 
+Durable Entities is at this time still in preview and there is an explicit note about performance. Still I wanted to get some sense of the current state and I ran a short loadtest via loader.io. It only allowes for a 60 seconds load test:
+
+<a id="single_image" href="/img/2019/loadtest1.png" class="fancybox" rel="loadtest"><img src="/img/2019/loadtest1-thumb.png"/></a> 
+<a id="single_image" href="/img/2019/loadtest2.png" class="fancybox" rel="loadtest"><img src="/img/2019/loadtest2-thumb.png"/></a> 
  
 ## Conclusion
 
 I think Durable Entities is quite a powerful construct and enables a lot of advanced distributed statefull scenario's in a very scalable and const effective way. 
+
+The code for this PoC can be found on [GitHub](https://github.com/keesschollaart81/ServerlessDeviceOfflineDetection/).
