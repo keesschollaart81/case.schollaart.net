@@ -51,7 +51,7 @@ This implementation for our device offline detection can be visualized in a sequ
 
 For every incoming message we check if there is already an orchestrator running/waiting. This lookup is by ID and in our example we used the device ID as the ID for the orchestrator. 
 
-```cs
+~~~ cs
 [FunctionName(nameof(HttpTrigger))]
 public static async Task<IActionResult> HttpTrigger(
     [HttpTrigger(AuthorizationLevel.Anonymous, "get")] HttpTriggerArgs args,
@@ -73,7 +73,7 @@ public static async Task<IActionResult> HttpTrigger(
     }
     return new OkResult();
 }
-```
+~~~
 
 If there is already a running orchestrator, this running orchestrator is notified that there is a new message. The framework will (in a asynchronous manner) wakeup the this orchestrator.
 
@@ -83,7 +83,7 @@ The first time an orchestrator is started, it will create the Durable Entity, th
 
 Then the orchestrator will do a `WaitForExternalEvent` for the given time(out). While it's waiting, the Durable Functions framework will 'kill' the thread. The orchestrator thread will be revived when this event is triggered or the timeout period has elapsed.  
 
-```cs
+~~~ cs
 [FunctionName(nameof(WaitingOrchestrator))]
 public static async Task WaitingOrchestrator(
     [OrchestrationTrigger] IDurableOrchestrationContext ctx,
@@ -109,14 +109,15 @@ public static async Task WaitingOrchestrator(
         return;
     }
 }
-```
+~~~
+
 When the offline detection timeout has been reached, a `TimeoutException` will be thrown, then we call the `SendStatusUpdate` activity function. When the `MessageReceived` event is raised, `ctx.ContinueAsNew` is called whichs will 'bring back' the orchestrator to it's next iteration/state. As long as the device is online, this orchestrator is considered to live forever.
 
 ### The Entity
 
 The entity is the stateful object we work with. The instance has an unique ID and can represent anything, from a user to a building and in our ase a device. In our Device Entity we manage the `OfflineAfter` and `LastCommunicationDateTime` properties/state. With Durable Entities you implement an Entity as if it is a normal Azure Function:
 
-```cs
+~~~ cs
 [FunctionName(nameof(DeviceEntity))]
 public static async Task DeviceEntity([EntityTrigger] IDurableEntityContext ctx)
 {
@@ -141,8 +142,8 @@ public static async Task DeviceEntity([EntityTrigger] IDurableEntityContext ctx)
             ctx.Return(device.OfflineAfter);
             break;
     }
-}
-```
+} 
+~~~
 
 For now, all interactions with the Entity are implemented via the `switch` on `ctx.OperationName`. This will change [later](https://medium.com/@cgillum/azure-functions-durable-entities-67db648d2f74) so that properties/methods can be used.
 
@@ -174,7 +175,7 @@ Stream Analytics enables you to make conclusions on streaming data. For this cha
 
 This blogpost really focusses on solving this with Durable Entities which is part of the Durable Functions 2.0 release. We also can solve this challenge with Durable Function 1.0, it's not as nice but...
 
-```cs
+~~~ cs
 [FunctionName(nameof(WaitingOrchestrator))]
 public static async Task WaitingOrchestrator(
     [OrchestrationTrigger] IDurableOrchestrationContext ctx,
@@ -198,7 +199,7 @@ public static async Task WaitingOrchestrator(
         return;
     }
 }
-```
+~~~
 
 So the first run of the Orchestrator, we use an Activity Function called `GetOfflineAfter` to get the `OfflineAfter` timespance, then it's passed through. The downside of this is, there is no state to call. So we cannot 'ask' anyone what the current state is or when there was a last message.
 
