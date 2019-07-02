@@ -164,12 +164,6 @@ Using CosmosDb (Triggers) to work with the state was definitely on my radar. Cos
 
 In most cases, CosmosDb is a natural fit you the device registry/metadata. The backing-storage for the online/offline state however, is better off with Azure Storage. 
 
-### Stream Analytics
-
-Stream Analytics enables you to make conclusions on streaming data. For this challenge, Stream Analytics seems to be a potential solution. I see 2 problems:
-- It is complicated to work with a device-specific timeout. Stream Analytics can use reference data for lookups like this, but a device registry of 1.000.000 is just to much.
-- No message means no trigger point. It's very hard to create a 'there is no message' conclusion with Stream Analytics since it only allows you to make conclusions over stream data.
-
 ### Durable Functions 1.x
 
 This blogpost really focusses on solving this with Durable Entities which is part of the Durable Functions 2.0 release. We could have solved this challenge with Durable Function 1.0, it's not as nice but...
