@@ -80,18 +80,11 @@ a {
 
 #content h2 {
     padding: 0;
-    margin: 35px 0 20px -12px;
+    margin: 35px 0 20px 15px;
     color: black;
     font-family: 'Slabo 27px', serif;
     font-size: 24px;
     font-weight: bold;
-}
-
-#content h2::before {
-    content: "♦";
-    padding-right: 7px;
-    color: black;
-    font-size: 24px;
 }
 
 #content h3 {
