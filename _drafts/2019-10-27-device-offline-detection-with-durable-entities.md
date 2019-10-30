@@ -207,7 +207,7 @@ When a device turns offline, there will be no message in the 'OfflineAfter' time
 
 ### Status Changes & Dashboard
 
-The DeviceEntity is responsible to publish status changes, there a dozen ways one can do that, for this demo I chose Azure SignalR Service. It's really easy to publish messages to SignalR using the output bindings. I also expose the negotiate endpoint that SignalR clients neeed in my Azure Functions app. This way, my entire app can run self contained within serverless infrastructure.
+The DeviceEntity is responsible to publish status changes, there are a dozen ways one can do that, for this demo I chose Azure SignalR Service. It's really easy to publish messages to SignalR using the output bindings. I also expose the negotiate endpoint that SignalR clients neeed in my Azure Functions app. This way, my entire app can run self contained within serverless infrastructure.
 
 ~~~cs
 private async Task ReportState(string state)
@@ -220,7 +220,7 @@ private async Task ReportState(string state)
 }
 ~~~
 
-To test this this Device Offline Detection meganism, I've build a very simple dashboard. The dashboard uses the SignalR clientside SDK to connect to the negotiate endpoint in Azure Functions which will 'redirect' it to Azure SignalR Service. Then with some  javascript the device status changes are visualised...
+To test this Device Offline Detection meganism, I've build a very simple dashboard. The dashboard uses the SignalR client side SDK to connect to the negotiate endpoint in Azure Functions which will 'redirect' it to Azure SignalR Service. Then with some javascript the device status changes are visualised...
 
 <a id="single_image" href="/img/2019/dashboard.gif" class="fancybox" rel="loadtest" ><img src="/img/2019/dashboard_still.png"/></a> 
 
@@ -230,20 +230,19 @@ To test this this Device Offline Detection meganism, I've build a very simple da
   
 ### What does this enable?
 
-So... we have offline detection and the LastCommunication in the Azure Functions Durable Entity state, now what?
+So... we have offline detection and the LastCommunication DateTime in the Azure Functions Durable Entity state, now what?
 
 - We can push out a message on state changes (no polling required)
-- We can expose an HTTP Trigger based Function to return the Last Communication DateTime
+- We can expose an HTTP Trigger based Function to return the LastCommunication DateTime
 - We only depend on Azure Storage which can take up to 20.000 request/sec and is low in cost
 - No reserved capacity for VM's, containers, CosmosDb... No messages == No cost!
 - No plumbing-code for triggers, distributed state, scaling and resiliency thanks to Azure (Durable) Functions!
 
 ## Performance
 
-As this blogpost started with some requirements on performance I wanted to see how far we can stretch Durable Entities. As a simple loadtest I created a TestDevice (just a Console App) that puts messages in a queue. 
+As this blogpost started with some requirements on performance I wanted to see how far we can stretch Durable Entities. To test this, I ran a simple loadtest using a TestDevice (just a Console App) that puts messages in a queue. 
 
-A normal Azure Functions Consumption plan was able to process 300 messages per second. This means that in total ~1000 functions complete per second. 
-I also did a testrun with a Azure Functions Premium Consumption plan with the mid-sized ES2 SKU. This run (screenshot 2 and 3) was able to process ~1250 messages per second. 
+A normal Azure Functions Consumption plan was able to process 300 messages per second. I also did a testrun with an Azure Functions Premium Consumption plan with the mid-sized ES2 SKU. This run (screenshot 2 and 3) was able to process ~1250 messages per second. 
 
 <a id="single_image" href="/img/2019/loadtest3.png" class="fancybox" rel="loadtest" title="Load Test with normal Consumption plan. Purple offline messages at the end."><img src="/img/2019/loadtest3-thumb.png"/></a> 
 <a id="single_image" href="/img/2019/loadtest4.png" class="fancybox" rel="loadtest" title="Second load test on Premium Consumption plan"><img src="/img/2019/loadtest4-thumb.png"/></a> 
