@@ -73,9 +73,9 @@ Although there is an await statement, `SignalEntityAsync()` is a 'fire and forge
 
 ### Device Entity
 
-The entity is the stateful object we work with. An entity can represent anything, from a user to a building and in our scenario a device. In our `DeviceEntity` we keep track of the `LastCommunicationDateTime` properties/state. Entities can be implemented in two patterns: 'Function Based' and 'Class Based', in this example I use the 'Class Based' pattern. So each device will get an instance of the 'DeviceEntity' class:
+The entity is the stateful object we work with. An entity can represent anything, from a user to a building and in our scenario a device. In our `DeviceEntity` we keep track of the `LastCommunicationDateTime` properties/state. Entities can be implemented in two patterns: 'Function Based' and 'Class Based', in this example I use the 'Class Based' pattern. So each device will get an instance of the 'DeviceEntity' class.
 
-State of the Entity lives in the properties of an object, Durable Framework does the (de)serialization everytime code starts/stops on an instance of an entity. In the example below the `Id` and `LastCommunicationDateTime` will be set/managed by the Durable Framework.
+The state of the Entity lives in the properties of an object, Durable Framework does the (de)serialization every time code starts/stops on an instance of an entity. In the example below, the `Id` and `LastCommunicationDateTime` will be set/managed by the Durable Framework.
 
 ~~~ cs
 [JsonObject(MemberSerialization.OptIn)]
@@ -117,7 +117,7 @@ public class DeviceEntity
 }
 ~~~
 
-Durable Frameworks needs an entry point to construct the entity, this static method is decorated with the `[FunctionName(...)]` attribute and takes a `IDurableEntityContext` as an argument. In this operation you must instantiate the Class based entity via the `DispatchAsync()` method. An initiate state can be provisioned with the `SetState()` operation.
+Durable Frameworks needs an entry point to construct the entity, this static method is decorated with the `[FunctionName(...)]` attribute and takes a `IDurableEntityContext` as an argument. In this operation the class based entity needs to be instantiated via the `DispatchAsync()` method. An initial state can be provisioned with the `SetState()` operation.
 
 The values of properties on the class will be automatically serialized to the state of the object after working with them. So if a Client Function calls the `MessageReceived()` method, the `DeviceEntity` is autmatically instantiated and in the body of `MessageReceived()` the properties of the class are recovered from (persistent) state. So properties like `this.LastCommunicationDateTime` can be updated and then, when `MessageReceived()` returns, Durable Functions will persist the state before it executes a new operation for this specific entity.
 
