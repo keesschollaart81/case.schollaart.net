@@ -73,7 +73,7 @@ Although there is an await statement, `SignalEntityAsync()` is a 'fire and forge
 
 ### Device Entity
 
-The entity is the stateful object we work with. An entity and can represent anything, from a user to a building and in our scenario a device. In our Device Entity we keep track of the `LastCommunicationDateTime` properties/state. Entities can be implemented in two patterns: 'Function Based' and 'Class Based', in this example I use the 'Class Based' pattern. So each device will get an instance of the 'DeviceEntity' class:
+The entity is the stateful object we work with. An entity can represent anything, from a user to a building and in our scenario a device. In our `DeviceEntity` we keep track of the `LastCommunicationDateTime` properties/state. Entities can be implemented in two patterns: 'Function Based' and 'Class Based', in this example I use the 'Class Based' pattern. So each device will get an instance of the 'DeviceEntity' class:
 
 State of the Entity lives in the properties of an object, Durable Framework does the (de)serialization everytime code starts/stops on an instance of an entity. In the example below the `Id` and `LastCommunicationDateTime` will be set/managed by the Durable Framework.
 
