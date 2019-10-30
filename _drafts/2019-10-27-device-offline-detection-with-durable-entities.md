@@ -224,7 +224,7 @@ So... we have offline detection and the LastCommunication in the Azure Functions
 
 - We can push out a message on state changes (no polling required)
 - We can expose an HTTP Trigger based Function to return the Last Communication DateTime
-- We only depend on Azure Storage, 20.000 request/sec, low cost
+- We only depend on Azure Storage which can take up to 20.000 request/sec and is low in cost
 - No reserved capacity for VM's, containers, CosmosDb... No messages == No cost!
 - No plumbing-code for triggers, distributed state, scaling and resiliency thanks to Azure (Durable) Functions!
 
@@ -239,10 +239,10 @@ I also did a testrun with a Azure Functions Premium Consumption plan with the mi
 <a id="single_image" href="/img/2019/loadtest4.png" class="fancybox" rel="loadtest" title="Second load test on Premium Consumption plan"><img src="/img/2019/loadtest4-thumb.png"/></a> 
 <a id="single_image" href="/img/2019/loadtest5.png" class="fancybox" rel="loadtest" title="Second load test on Premium Consumption plan scaling to ~18 nodes"><img src="/img/2019/loadtest5-thumb.png"/></a> 
 
-Is stopped both test will everything still worked. In the background I monitored the internal queues of Durable Functions and I stopped the load test when I noticed that the workers were not able to keep the queues empty any more (>1000 messages in the queue). 
+I stopped both tests before everything melted. In the background, I monitored the internal queues of Durable Functions and I stopped the load test when I noticed that the workers were not able to keep the queues empty any more (>1000 messages in the queue). 
 
 ## Conclusion
 
-I think Durable Entities is quite a powerful construct and enables a lot of advanced distributed statefull scenario's in a very scalable and const effective way. 
+I think Durable Entities is quite a powerful construct and enables a lot of advanced distributed statefull scenario's in a very scalable and cost effective way. 
 
 The code for this PoC can be found on [GitHub](https://github.com/keesschollaart81/ServerlessDeviceOfflineDetection/). The readme of this repository contains all the information needed to run this example yourself as it contains both the [Azure Pipelines YAML definition](https://github.com/keesschollaart81/ServerlessDeviceOfflineDetection/blob/dev/azure-pipelines.yaml) as well the [ARM template](https://github.com/keesschollaart81/ServerlessDeviceOfflineDetection/blob/dev/src/AzureResourceGroup/azuredeploy.json) to provision the Azure infrastructure. 
