@@ -18,7 +18,7 @@ This post describes one way of building this Offline Detection capability. In a 
  
 ##  The Challenges
 
-Detecting offline devices might sound quite trivial, but if you continue to add zero's to the requirements it becomes more and more complex. This blogpost assumes 1.000.000 connected devices that ingest 1 message every 10 minutes (±1.000 p/s) via Azure EventGrid, Azure EventHub, IoT-Hub or an Azure Storage Queue. With these numbers, you start to run into challenges, for example...
+Detecting offline devices might sound quite trivial, but if you continue to add zero's to the requirements it becomes more and more complex. This blogpost assumes 1.000.000 connected devices that emit 1 message every 10 minutes (±1.000 p/s) via Azure EventGrid, Azure EventHub, IoT-Hub or an Azure Storage Queue. With these numbers, you start to run into challenges, for example...
 
 ### No message is no trigger
 
@@ -48,31 +48,31 @@ This implementation for our device offline detection can be visualized in a sequ
 
 ### The Client Function
 
-Similar to Orchestrators, Durable Entities cannot be reached directly via a normal trigger binding, to work with Entities we need a 'Client Function'. This 'Client Function' can be triggered by anything, in an IoT scenario it will probably be triggered by an IoT-Hub or Queue trigger. The Client Function takes a dependency on `IDurableEntityClient` which will be injected by the Durablable Framework. This `durableEntityClient` allows you to read the state of an Entity with `ReadEntityStateAsync()` and to call a method on an Entity with `SignalEntityAsync()`. When working with entities, an EntityId is always needed. This Id uniquely identifies the instance and state of an entity, in our example the DeviceId.  
+Similar to Orchestrators, Durable Entities cannot be reached directly via a normal trigger binding, to work with Entities we need a 'Client Function'. A 'Client Function' is a normal Azure Functions can be triggered by anything and can interact with Entities. The Client Function takes a dependency on `IDurableEntityClient` which will be injected by the Durablable Framework. With this `durableEntityClient` you to read the state of an Entity with `ReadEntityStateAsync()` and call a method on an Entity with `SignalEntityAsync()`. When working with entities, an EntityId is always needed. This Id uniquely identifies the instance and state of an entity by it's name and Id, in our example the 'DeviceEntity' and the Id of the device.  
 
-In the example Client Function below we get the DeviceId from the HttpTrigger (used for simplicity) to construct the EntityId. Then the `SignalEntityAsync()` is called. The first argument being the DeviceId (and the name of the entity) and the second argument the reference to the method that we want to invoke.
+In the 'Client Function' from the examble below, we get the DeviceId from the Queue message to construct the EntityId. Then the `SignalEntityAsync()` is called with 2 arguments, first the DeviceId (and the name of the entity) and the secondly the namf of the method that we want to invoke.
 
-Although there is an await statement, it is a 'fire and forget' operation as the actual operation on the entity will happen later. There is an await statement because of the IO it takes to persist the operation to an internal queue. So the Client Function completes very quickly and the Durable Framework will asynchronously instantiate the Entity and invoke the `MessageReceived` method.
+Although there is an await statement, `SignalEntityAsync()` is a 'fire and forget' operation as the actual method invocation on the entity will happen later. There is an await statement because of the IO it takes to persist the operation to an internal queue. So the Client Function completes very quickly and the Durable Framework will asynchronously instantiate the Entity and invoke the `MessageReceived` method.
 
 ~~~ cs
-[FunctionName(nameof(HttpTrigger))]
-public static async Task<IActionResult> HttpTrigger(
-    [HttpTrigger(AuthorizationLevel.Anonymous, "get")] HttpTriggerArgs args,
+[FunctionName(nameof(QueueTrigger))]
+public async Task QueueTrigger(
+    [QueueTrigger("device-messages")] CloudQueueMessage message,
     [DurableClient] IDurableEntityClient durableEntityClient,
     ILogger log)
 {
-    log.LogInformation($"Receiving message for device {args.DeviceId}");
+    log.LogInformation($"Receiving message for deviceId: {message.AsString}");
 
-    var entity = new EntityId(nameof(DeviceEntity), args.DeviceId);
+    var entity = new EntityId(nameof(DeviceEntity), message.AsString);
     await durableEntityClient.SignalEntityAsync(entity, nameof(DeviceEntity.MessageReceived));
-
-    return new OkResult();
 }
 ~~~
 
 ### Device Entity
 
-The entity is the stateful object we work with. The instance has an unique ID and can represent anything, from a user to a building and in our ase a device. In our Device Entity we manage the `LastCommunicationDateTime` properties/state. Entities can be implemented in two patterns: 'Function Based' and 'Class Based', in example I use the 'Class Based' pattern. So each device will get an instance of my 'DeviceEntity' class:
+The entity is the stateful object we work with. An entity and can represent anything, from a user to a building and in our scenario a device. In our Device Entity we keep track of the `LastCommunicationDateTime` properties/state. Entities can be implemented in two patterns: 'Function Based' and 'Class Based', in this example I use the 'Class Based' pattern. So each device will get an instance of the 'DeviceEntity' class:
+
+State of the Entity lives in the properties of an object, Durable Framework does the (de)serialization everytime code starts/stops on an instance of an entity. In the example below the `Id` and `LastCommunicationDateTime` will be set/managed by the Durable Framework.
 
 ~~~ cs
 [JsonObject(MemberSerialization.OptIn)]
@@ -114,14 +114,46 @@ public class DeviceEntity
 }
 ~~~
 
-Entities need an entry point to construct the entity, this static method is decorated with the `[FunctionName()]` attribute and takes a `IDurableEntityContext` as an argument. With the `IDurableEntityContext` the entity is constructed via the `DispatchAsync()` method and an initiate state can be provisioned with `SetState()`.
+Durable Frameworks needs an entry point to construct the entity, this static method is decorated with the `[FunctionName(...)]` attribute and takes a `IDurableEntityContext` as an argument. In this operation you must instantiate the Class based entity via the `DispatchAsync()` method. An initiate state can be provisioned with the `SetState()` operation.
 
 The values of properties on the class will be automatically serialized to the state of the object after working with them. So if a Client Function calls the `MessageReceived()` method, the `DeviceEntity` is autmatically instantiated and in the body of `MessageReceived()` the properties of the class are recovered from (persistent) state. So properties like `this.LastCommunicationDateTime` can be updated and then, when `MessageReceived()` returns, Durable Functions will persist the state before it executes a new operation for this specific entity.
 
-So far the basics of Durable Entities. To get Device Offline detection to work in a scalable way, we need some more infrastructure...
+### Entities and Dependencies
+
+How do we do dependency injection and IO in a Durable Entity?
+
+In this scenario I decided to to publish the state of the Device to Azure SignalR. Later I also need an Azure Storage Queue for timeout messages. Instance methods on Durable Entity classes cannot take binded arguments like normal functions. Input and Output bindings are only available on the entry point of the entity, in our example the static `HandleEntityOperation()` method. This method is responsible for the instantiation of the entity and can pass these services to the constructor of the entity.
+
+~~~cs
+public DeviceEntity(string id, ILogger logger, CloudQueue timeoutQueue, IAsyncCollector<SignalRMessage> signalRMessages)
+{
+    this.Id = id;
+    this.logger = logger;
+    this.timeoutQueue = timeoutQueue;
+    this.signalRMessages = signalRMessages;
+}
+
+[FunctionName(nameof(DeviceEntity))]
+public static async Task HandleEntityOperation(
+    [EntityTrigger] IDurableEntityContext context,
+    [SignalR(HubName = "devicestatus")] IAsyncCollector<SignalRMessage> signalRMessages,
+    [Queue("timeoutQueue")] CloudQueue timeoutQueue,
+    ILogger logger)
+{
+    // inject the dependencies and input/output bindings to the constructor of the entity
+    await context.DispatchAsync<DeviceEntity>(context.EntityKey, logger, timeoutQueue, signalRMessages);
+}
+~~~
+
+The constructor takes all the dependencies as you're use to, in this case a reference to ILogger, a CloudQueue, etc. After constructing this Entity, the Durable Framework can invoke instance methods such as `MessageReceived`, then, the fields are available as if they were input/outpunt bindings (but now as field on the object).
+
+Now that we have a working entity, how can we keep track of the devices online/offline state? 
 
 ### Timeout Queue
 
+The `MessageReceived` operation on the DeviceEntity will be invoked for every message coming from the device. Here we will use the 'Timeout Queue'. In the Timeout Queue we put 1 message per device. Everytime we get a message from the device we check if there is already a message in the Timeout Queue, if not we add one. On this new message, the 'Visibility Timeout' is set equal to the 'Offline After' of a device. In our example 'Offline After' is fixed to 30 seconds but this can be a variable value per device.
+
+With Azure Storage Queues it is possible to update a message that is currently in a queue by using a reference of this message (Id and PopReceipt). This reference, we store as state on the Device Entity. As long as messages come in within these 30 seconds and there is a reference to a message in the Timeout Queue, the 'Visibility Timeout' of this message is reset to 30 seconds from now.
 
 ~~~cs
 public async Task MessageReceived()
@@ -130,12 +162,13 @@ public async Task MessageReceived()
  
     if (this.TimeoutQueueMessageId == null)
     {  
+        // no message in the TimeoutQueue yet
         // put message on timeout queue with visibility of the 'OfflineAfter' of this device
 
         var message = new CloudQueueMessage(this.Id);
         await timeoutQueue.AddMessageAsync(message, null, this.OfflineAfter, null, null);
 
-        // store the reference of this queue message in the state of this device
+        // store the reference to this queue message in the state of this device
         this.TimeoutQueueMessageId = message.Id;
         this.TimeoutQueueMessagePopReceipt = message.PopReceipt;
 
@@ -153,10 +186,30 @@ public async Task MessageReceived()
 }
 ~~~
 
+When a device turns offline, there will be no message in the 'OfflineAfter' time period causing the message to be released from the TimeoutQueue. This will trigger another normal client function (`HandleOfflineMessage`) which will invoke the `DeviceTimeout()` method on our DeviceEntity.
 
-### Status Changes
+### Status Changes & Dashboard
 
-### Dashboard & TestApp
+The DeviceEntity is responsible to publish status changes, there a dozen way one can do that, for this demo I chose Azure SignalR Service. It's really easy to publish messages to SignalR using the output bindings. I also expose the negotiate endpoint that SignalR clients neeed in my Azure Functions app. This way, my entire app can run self contained within serverless infrastructure.
+
+~~~cs
+private async Task ReportState(string state)
+{
+    await this.signalRMessages.AddAsync(new SignalRMessage
+    {
+        Target = "statusChanged",
+        Arguments = new[] { new { deviceId = this.Id, status = state } }
+    });
+}
+~~~
+
+To test this this Device Offline Detection meganism, I've build a very simple dashboard. The dashboard uses the SignalR clientside SDK to connect to the negotiate endpoint in Azure Functions which will 'redirect' it to Azure SignalR Service. Then with some  javascript the device status changes are visualised...
+
+<a id="single_image" href="/img/2019/dashboard.gif" class="fancybox" rel="loadtest" ><img src="/img/2019/dashboard_still.png"/></a> 
+
+### Timers
+
+//todo reference the upcoming timers
   
 ### What does this enable?
 
@@ -170,22 +223,19 @@ So... we have offline detection and the LastCommunication in the Azure Functions
 
 ## Performance
 
-Durable Entities is, at this time, still in preview and there is an explicit note about performance. Still I wanted to get some sense of the current state and I ran a short loadtest via loader.io. It only allowes for a 60 seconds load test:
+As this blogpost started with some requirements on performance I wanted to see how far we can stretch Durable Entities. As a simple loadtest I created a TestDevice (just a Console App) that puts messages in a queue. 
 
-<a id="single_image" href="/img/2019/loadtest1.png" class="fancybox" rel="loadtest"><img src="/img/2019/loadtest1-thumb.png"/></a> 
-<a id="single_image" href="/img/2019/loadtest2.png" class="fancybox" rel="loadtest"><img src="/img/2019/loadtest2-thumb.png"/></a> 
+A normal Azure Functions Consumption plan was able to process 300 messages per second. This means that in total ~1000 functions complete per second. 
+I also did a testrun with a Azure Functions Premium Consumption plan with the mid-sized ES2 SKU. This run (screenshot 2 and 3) was able to process ~1250 messages per second. 
 
-In these 60 seconds I was already able to scale to more than 1.000 requests per second! I'm sure that with some tweaking on the Durable Functions configuration options this will scale much further! 
- 
+<a id="single_image" href="/img/2019/loadtest3.png" class="fancybox" rel="loadtest" title="Load Test with normal Consumption plan. Purple offline messages at the end."><img src="/img/2019/loadtest3-thumb.png"/></a> 
+<a id="single_image" href="/img/2019/loadtest4.png" class="fancybox" rel="loadtest" title="Second load test on Premium Consumption plan"><img src="/img/2019/loadtest4-thumb.png"/></a> 
+<a id="single_image" href="/img/2019/loadtest5.png" class="fancybox" rel="loadtest" title="Second load test on Premium Consumption plan scaling to ~18 nodes"><img src="/img/2019/loadtest5-thumb.png"/></a> 
+
+Is stopped both test will everything still worked. In the background I monitored the internal queues of Durable Functions and I stopped the load test when I noticed that the workers were not able to keep the queues empty any more (>1000 messages in the queue). 
+
 ## Conclusion
 
 I think Durable Entities is quite a powerful construct and enables a lot of advanced distributed statefull scenario's in a very scalable and const effective way. 
 
-The code for this PoC can be found on [GitHub](https://github.com/keesschollaart81/ServerlessDeviceOfflineDetection/).
-
-
-
-# removed
- - Compare with CosmosDb
- - Functions 1.0
- - Orchestrator
+The code for this PoC can be found on [GitHub](https://github.com/keesschollaart81/ServerlessDeviceOfflineDetection/). The readme of this repository contains all the information needed to run this example yourself as it contains both the [Azure Pipelines YAML definition](https://github.com/keesschollaart81/ServerlessDeviceOfflineDetection/blob/dev/azure-pipelines.yaml) as well the [ARM template](https://github.com/keesschollaart81/ServerlessDeviceOfflineDetection/blob/dev/src/AzureResourceGroup/azuredeploy.json) to provision the Azure infrastructure. 

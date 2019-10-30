@@ -39,7 +39,13 @@
 		{% endif %}
 		
 		
-		$("a.fancybox").fancybox();
+		$("a.fancybox").fancybox({
+			helpers: {
+				overlay: {
+				locked: false
+				}
+			}
+		});
     }); 
 	
 	hljs.configure({
