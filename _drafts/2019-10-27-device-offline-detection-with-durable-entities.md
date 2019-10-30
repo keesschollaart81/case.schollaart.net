@@ -188,6 +188,10 @@ public async Task MessageReceived()
 
 When a device turns offline, there will be no message in the 'OfflineAfter' time period causing the message to be released from the TimeoutQueue. This will trigger another normal client function (`HandleOfflineMessage`) which will invoke the `DeviceTimeout()` method on our DeviceEntity.
 
+### Read and use the state
+
+//todo client function to retrieve state
+
 ### Status Changes & Dashboard
 
 The DeviceEntity is responsible to publish status changes, there a dozen way one can do that, for this demo I chose Azure SignalR Service. It's really easy to publish messages to SignalR using the output bindings. I also expose the negotiate endpoint that SignalR clients neeed in my Azure Functions app. This way, my entire app can run self contained within serverless infrastructure.
