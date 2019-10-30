@@ -18,7 +18,7 @@ This post describes one way of building this Offline Detection capability, in a 
  
 ##  The Challenges
 
-Detecting offline devices might sound quite trivial, but if you continue to add zero's to the requirements it becomes more and more complex. This blogpost assumes 1.000.000 connected devices that emit 1 message every 10 minutes (±1.000 p/s) via Azure EventGrid, Azure EventHub, IoT-Hub or an Azure Storage Queue. With these numbers, you start to run into challenges, for example...
+Detecting offline devices might sound quite trivial, but if you continue to add zero's to the requirements it becomes more and more complex. This blogpost assumes 1.000.000 connected devices that emit 1 message every 10 minutes (±1.600 p/s) via Azure EventGrid, Azure EventHub, IoT-Hub or an Azure Storage Queue. With these numbers, you start to run into challenges, for example...
 
 ### No message is no trigger
 
