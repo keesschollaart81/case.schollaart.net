@@ -125,7 +125,7 @@ The values of properties on the object will be automatically serialized to the s
 
 How do we do dependency injection and IO in a Durable Entity?
 
-In this scenario I decided to to publish the state of the Device to Azure SignalR. Later I also need an Azure Storage Queue for timeout messages. Instance methods on Durable Entity classes cannot take binded arguments like normal functions. Input and Output bindings are only available on the entry point of the entity, in our example the static `HandleEntityOperation()` method. This method is responsible for the instantiation of the entity and can pass these services to the constructor of the entity.
+In this scenario I decided to to publish the state of the Device to Azure SignalR Service. Later, I also need an Azure Storage Queue for timeout messages. Instance methods on Durable Entity classes cannot take input or output bindings. Input and Output bindings are only available on the entry point of the entity, in our example the static `HandleEntityOperation()` method. This method is responsible for the instantiation of the entity and can pass these services/dependencies to the constructor of the entity.
 
 ~~~cs
 public DeviceEntity(string id, ILogger logger, CloudQueue timeoutQueue, IAsyncCollector<SignalRMessage> signalRMessages)
@@ -148,7 +148,7 @@ public static async Task HandleEntityOperation(
 }
 ~~~
 
-The constructor takes all the dependencies as you're use to, in this case a reference to ILogger, a CloudQueue, etc. After constructing this Entity, the Durable Framework can invoke instance methods such as `MessageReceived`, then, the fields are available as if they were input/outpunt bindings (but now as field on the object).
+The constructor takes all the dependencies as you're used to, in this case a reference to ILogger, a CloudQueue, etc. After constructing this Entity, the Durable Framework can invoke instance methods such as `MessageReceived`, then, the fields are available as if they were input/outpunt bindings (but now as field on the object).
 
 Now that we have a working entity, how can we keep track of the devices online/offline state? 
 
