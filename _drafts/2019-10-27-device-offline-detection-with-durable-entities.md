@@ -38,6 +38,8 @@ Not every device is the same, especially if the backend has to work for devices 
 
 ### So, what do we need?
 
+Let quickly summarize the requirements:
+
 - Serverless infrastructure (scalable, no infra-burden, cost effective)
 - High throughput (>1000 messages per second)
 - As less IO as possible
@@ -162,7 +164,7 @@ Now that we have a working entity, how can we keep track of the devices online/o
 
 ### Timeout Queue
 
-The `MessageReceived` operation on the DeviceEntity will be invoked for every message coming from the device. Here we will use the 'Timeout Queue'. In the Timeout Queue we put 1 message per device. Everytime we get a message from the device we check if there is already a message in the Timeout Queue, if not we add one. On this new message, the 'Visibility Timeout' is set equal to the 'Offline After' of a device. In our example 'Offline After' is fixed to 30 seconds but this can be a variable value per device.
+The `MessageReceived` operation on the DeviceEntity will be invoked for every message coming from the device. Here we will use the 'Timeout Queue'. In the Timeout Queue we put 1 message per device. Every time we get a message from the device we check if there is already a message in the Timeout Queue, if not we add one. On this new message, the 'Visibility Timeout' is set equal to the 'Offline After' of a device. In our example 'Offline After' is fixed to 30 seconds but this can be a variable value per device.
 
 With Azure Storage Queues it is possible to update a message that is currently in a queue by using a reference of this message (Id and PopReceipt). This reference, we store as state on the Device Entity. As long as messages come in within these 30 seconds and there is a reference to a message in the Timeout Queue, the 'Visibility Timeout' of this message is reset to 30 seconds from now.
 
