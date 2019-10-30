@@ -48,11 +48,7 @@ This implementation for our device offline detection can be visualized in a sequ
 
 ### The Client Function
 
-Similar to Orchestrators, Durable Entities cannot be reached directly via a normal trigger binding, to work with Entities we need a 'Client Function'. A 'Client Function' is a normal Azure Functions that can be triggered by anything and can interact with Entities. The Client Function takes a dependency on `IDurableEntityClient` which will be injected by the Durablable Framework. This `durableEntityClient` can be used both to read the state of an Entity with `ReadEntityStateAsync()` and to invoke a method on an Entity with `SignalEntityAsync()`. When working with entities, an EntityId is always needed. This Id uniquely identifies the instance and state of an entity by it's name and Id, in our example the 'DeviceEntity' and the Id of the device.  
-
-In the 'Client Function' from the example below, the DeviceId is read from the queue message to construct the EntityId. Then the `SignalEntityAsync()` is called with 2 arguments, first the DeviceId (and the name of the entity) and the secondly the name of the method that we want to invoke (`MessageReceived`).
-
-Although there is an await statement, `SignalEntityAsync()` is a 'fire and forget' operation as the actual method invocation on the entity will happen later. There is an await statement because of the IO it takes to persist the operation to an internal queue. So the Client Function completes very quickly and the Durable Framework will asynchronously instantiate the Entity and invoke the `MessageReceived` method.
+Similar to Orchestrators, Durable Entities cannot be reached directly via a normal trigger binding, to work with Entities we need a 'Client Function'. A 'Client Function' is a normal Azure Functions that can be triggered by anything and can interact with Entities. This is the Client Function that will be triggered for every device message and that interacts with our Durable Entity
 
 ~~~ cs
 [FunctionName(nameof(QueueTrigger))]
@@ -67,6 +63,13 @@ public async Task QueueTrigger(
     await durableEntityClient.SignalEntityAsync(entity, nameof(DeviceEntity.MessageReceived));
 }
 ~~~
+
+The Client Function takes a dependency on `IDurableEntityClient` which will be injected by the Durablable Framework. This `durableEntityClient` can be used both to read the state of an Entity with `ReadEntityStateAsync()` and to invoke a method on an Entity with `SignalEntityAsync()`. When working with entities, an EntityId is always needed. This Id uniquely identifies the instance and state of an entity by it's name and Id, in our example the 'DeviceEntity' and the Id of the device.  
+
+In the 'Client Function' from the example below, the DeviceId is read from the queue message to construct the EntityId. Then the `SignalEntityAsync()` is called with 2 arguments, first the DeviceId (and the name of the entity) and the secondly the name of the method that we want to invoke (`MessageReceived`).
+
+Although there is an await statement, `SignalEntityAsync()` is a 'fire and forget' operation as the actual method invocation on the entity will happen later. There is an await statement because of the IO it takes to persist the operation to an internal queue. So the Client Function completes very quickly and the Durable Framework will asynchronously instantiate the Entity and invoke the `MessageReceived` method.
+
 
 ### Device Entity
 
