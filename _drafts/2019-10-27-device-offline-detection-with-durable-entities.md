@@ -207,7 +207,7 @@ When a device turns offline, there will be no message in the 'OfflineAfter' time
 
 ### Status Changes & Dashboard
 
-The DeviceEntity is responsible to publish status changes, there a dozen way one can do that, for this demo I chose Azure SignalR Service. It's really easy to publish messages to SignalR using the output bindings. I also expose the negotiate endpoint that SignalR clients neeed in my Azure Functions app. This way, my entire app can run self contained within serverless infrastructure.
+The DeviceEntity is responsible to publish status changes, there a dozen ways one can do that, for this demo I chose Azure SignalR Service. It's really easy to publish messages to SignalR using the output bindings. I also expose the negotiate endpoint that SignalR clients neeed in my Azure Functions app. This way, my entire app can run self contained within serverless infrastructure.
 
 ~~~cs
 private async Task ReportState(string state)
