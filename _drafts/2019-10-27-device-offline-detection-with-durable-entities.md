@@ -14,7 +14,7 @@ How to detect the absense of device messages in a scalable, distributed and cost
 
 If you maintain the backend of an IoT device it's very likely that you would like to have a 'Offline Detection' capability. Most devices send messages to the cloud with a known frequency, for example a heartbeat message. If you don't get any messages for more than x minutes... it's offline! 
 
-This post describes one way of building this Offline Detection capability. In a very scalable and cost-effective way using cloud native technologies on the Microsoft Azure cloud.
+This post describes one way of building this Offline Detection capability, in a very scalable and cost-effective way using cloud native technologies on the Microsoft Azure cloud.
  
 ##  The Challenges
 
@@ -125,7 +125,7 @@ The values of properties on the object will be automatically serialized to the s
 
 How do we do dependency injection and IO in a Durable Entity?
 
-In this scenario I decided to to publish the state of the Device to Azure SignalR Service. Later, I also need an Azure Storage Queue for timeout messages. Instance methods on Durable Entity classes cannot take input or output bindings. Input and Output bindings are only available on the entry point of the entity, in our example the static `HandleEntityOperation()` method. This method is responsible for the instantiation of the entity and can pass these services/dependencies to the constructor of the entity.
+In this scenario I decided to publish the state of the Device to Azure SignalR Service. Later, I also need an Azure Storage Queue for timeout messages. Instance methods on Durable Entity classes cannot take input or output bindings. Input and Output bindings are only available on the entry point of the entity, in our example the static `HandleEntityOperation()` method. This method is responsible for the instantiation of the entity and can pass these services/dependencies to the constructor of the entity.
 
 ~~~cs
 public DeviceEntity(string id, ILogger logger, CloudQueue timeoutQueue, IAsyncCollector<SignalRMessage> signalRMessages)
