@@ -26,7 +26,7 @@ Some time, after the last received message, we want to run code that triggers th
 
 ### Distributed state
 
-To be scalable we would like to be stateless, Device Offline detection however is a stateful operation. How can we make this work on a scalable infrastructure where different messages can end up on different nodes. A distributed state is quite expensive in terms of both software complexity and IO. IO is also limiting scalability because of locks and at least 1 write and 1 read operation per message to deal with the state. 
+To be scalable we would like to be stateless, Device Offline detection however is a stateful operation. How can we make this work on a scalable infrastructure where different messages can end up on different nodes. A distributed state is quite expensive in terms of both software complexity and IO.  While every operation requires at least 1 write and 1 read operation per message to deal with the state, we would like to avoid IO and locks as much as possible. 
 
 ### Disaster recovery
 
@@ -36,11 +36,19 @@ What if suddenly all devices disconnect and/or reconnect? This will cause an eno
 
 Not every device is the same, especially if the backend has to work for devices from different manufacturers. The timeout has to be different per device. 
 
+### So, what do we need?
+
+- Serverless infrastructure (scalable, no infra-burden, cost effective)
+- High throughput (>1000 messages per second)
+- As less IO as possible
+- Push meganism for device state changes
+- Pull meganism for current state of device
+
 ## Durable Entities to the rescue!
 
 A solution to this challenge is to use Azure Durable Functions. Durable Functions are an extension of Azure Functions that lets you write stateful functions in a serverless environment. The extension manages state, checkpoints, and restarts for you. The rest of this post assumes basic understanding of [Durable Functions](https://docs.microsoft.com/en-us/azure/azure-functions/durable/durable-functions-overview).
 
-[Durable Entities](https://docs.microsoft.com/nl-nl/azure/azure-functions/durable/durable-functions-preview#entity-functions) is the newest addition to the Durable Functions framework (2.0 and later) and enables you to work with small pieces of state. This feature is heavily inspired by the Actor Model which you might know from [Akka.net](https://getakka.net/articles/intro/what-problems-does-actor-model-solve.html), [project Orleans](https://www.microsoft.com/en-us/research/project/orleans-virtual-actors/) or [Service Fabric Reliable Actors](https://docs.microsoft.com/en-us/azure/service-fabric/service-fabric-reliable-actors-introduction). 
+[Durable Entities](https://docs.microsoft.com/nl-nl/azure/azure-functions/durable/durable-functions-preview#entity-functions) is the newest addition to the Durable Functions framework (2.0 and upwards) and enables you to work with small pieces of state. This feature is heavily inspired by the Actor Model which you might know from [Akka.net](https://getakka.net/articles/intro/what-problems-does-actor-model-solve.html), [project Orleans](https://www.microsoft.com/en-us/research/project/orleans-virtual-actors/) or [Service Fabric Reliable Actors](https://docs.microsoft.com/en-us/azure/service-fabric/service-fabric-reliable-actors-introduction). 
 
 This implementation for our device offline detection can be visualized in a sequence diagram like this:
 
@@ -148,7 +156,7 @@ public static async Task HandleEntityOperation(
 }
 ~~~
 
-The constructor takes all the dependencies as you're used to, in this case a reference to ILogger, a CloudQueue, etc. After constructing this Entity, the Durable Framework can invoke instance methods such as `MessageReceived`, then, the fields are available as if they were input/outpunt bindings (but now as field on the object).
+The constructor takes all the dependencies as you're used to, in this case a reference to ILogger, a CloudQueue, etc. After constructing this Entity, the Durable Framework can invoke instance methods such as `MessageReceived`, then, the fields are available as if they were input/output bindings (but now as field on the object).
 
 Now that we have a working entity, how can we keep track of the devices online/offline state? 
 
