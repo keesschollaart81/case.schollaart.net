@@ -48,7 +48,7 @@ This implementation for our device offline detection can be visualized in a sequ
 
 ### The Client Function
 
-Similar to Orchestrators, Durable Entities cannot be reached directly via a normal trigger binding, to work with Entities we need a 'Client Function'. A 'Client Function' is a normal Azure Functions that can be triggered by anything and can interact with Entities. This is the Client Function that will be triggered for every device message and that interacts with our Durable Entity
+Similar to Orchestrators, Durable Entities cannot be reached directly via a normal trigger binding, to work with Entities we need a 'Client Function'. A 'Client Function' is a normal Azure Functions that can be triggered by anything and can interact with Entities. Below an example Client Function, this Client Function will be triggered for every device message and interacts with our Durable Entity:
 
 ~~~ cs
 [FunctionName(nameof(QueueTrigger))]
