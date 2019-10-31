@@ -274,18 +274,16 @@ Below some screenshots I took from Azure Monitor showing the number of requests 
 <a  href="/img/2019/loadtest4.png" class="fancybox" rel="loadtest" title="Second load test on Premium Consumption plan"><img src="/img/2019/loadtest4-thumb.png"/></a> 
 <a  href="/img/2019/loadtest5.png" class="fancybox" rel="loadtest" title="Second load test on Premium Consumption plan scaling to ~18 nodes"><img src="/img/2019/loadtest5-thumb.png"/></a> 
 
-A normal Azure Functions Consumption plan was able to process 300 messages per second. I also did a testrun with an Azure Functions Premium Consumption plan with the mid-sized ES2 SKU. This run (screenshot 2 and 3) was able to process ~1250 messages per second. 
-
 <!--
 <a href="https://raw.githubusercontent.com/keesschollaart81/case.schollaart.net/master/img/2019/loadtest3.png" title="Load Test with normal Consumption plan. Purple offline messages at the end."><img src="https://raw.githubusercontent.com/keesschollaart81/case.schollaart.net/master/img/2019/loadtest3-thumb.png"/></a> 
 <a href="https://raw.githubusercontent.com/keesschollaart81/case.schollaart.net/master/img/2019/loadtest4.png"  title="Second load test on Premium Consumption plan"><img src="https://raw.githubusercontent.com/keesschollaart81/case.schollaart.net/master/img/2019/loadtest4-thumb.png"/></a> 
 <a  href="https://raw.githubusercontent.com/keesschollaart81/case.schollaart.net/master/img/2019/loadtest5.png"  title="Second load test on Premium Consumption plan scaling to ~18 nodes"><img src="https://raw.githubusercontent.com/keesschollaart81/case.schollaart.net/master/img/2019/loadtest5-thumb.png"/></a> 
 -->
 
+A normal Azure Functions Consumption plan was able to process 300 messages per second. I also did a testrun with an Azure Functions Premium Consumption plan with the mid-sized ES2 SKU. This run (screenshot 2 and 3) was able to process ~1250 messages per second. 
 
 ## Conclusion
 
 I think Durable Entities is quite a powerful construct and enables a lot of advanced distributed stateful scenario's in a very scalable and cost effective way. 
 
 The code for this PoC can be found on [GitHub](https://github.com/keesschollaart81/ServerlessDeviceOfflineDetection/). The readme of this repository contains all the information needed to run this example yourself as it contains both the [Azure Pipelines YAML definition](https://github.com/keesschollaart81/ServerlessDeviceOfflineDetection/blob/dev/azure-pipelines.yaml) as well the [ARM template](https://github.com/keesschollaart81/ServerlessDeviceOfflineDetection/blob/dev/src/AzureResourceGroup/azuredeploy.json) to provision the Azure infrastructure. 
-
