@@ -10,6 +10,8 @@ How to detect the absense of device messages in a scalable, distributed and cost
 
 <!--more-->
 
+> Important: I've written a follow-up on this blogpost after Durable Functions 2.0 became General Available. Please head to that post if you want the latest/best version of this story/guidance! [Device Offline detection with Durable Entities]({% post_url 2019-10-31-device-offline-detection-with-durable-entities %})
+
 ## The Desire
 
 If you maintain the backend of an IoT device it's very likely that you would like to have a 'Offline Detection' capability. Most devices send messages to the cloud with a known frequency, for example a heartbeat message. If you don't get any messages for more than x minutes... it's offline! 

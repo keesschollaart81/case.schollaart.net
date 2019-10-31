@@ -2,13 +2,17 @@
 layout: post
 title: "Device Offline detection with Durable Entities - Revisited"
 author: "Kees Schollaart" 
-backgroundUrl: /img/2019/back6.jpg
-comments: true 
+backgroundUrl: /img/2019/back5.jpg
+comments: true  
+pageThemeColor: "#5c0000"
+description: How to detect the absence of device messages in a scalable, distributed and cost effective way? Durable Functions to the rescue!
 ---  
 
-How to detect the absense of device messages in a scalable, distributed and cost effictive way? Durable Functions to the rescue!
+How to detect the absence of device messages in a scalable, distributed and cost effective way? Durable Functions to the rescue! Un update of the previous post on this idea, as part of the final release of Durable Functions 2.0.
 
 <!--more-->
+
+> This is a follow-up on a [post]({% post_url 2019-07-01-device-offline-detection-with-durable-entities %}) I did ~4 months ago. Since then, the technology I used (Durable Entities) has gone through some beta's and is now General Available! Next to that, I got a lot of feedback and ideas on how to improve it so I've completely rewritten everyting except from the problem statement.
 
 ## The Desire
 
@@ -30,9 +34,9 @@ To be scalable we would like to be stateless, Device Offline detection however i
 
 ### Disaster recovery
 
-What if suddenly all devices disconnect and/or reconnect? This will cause an enormous peak in the offline detection logic. Both the backing-storage and the compute host need to be able to deal with this kind of peaks. When the detection logic get's overwealmed by a peak of messages or because it was offline during an update, it needs to deal with this 'delayed-processing' as well.
+What if suddenly all devices disconnect and/or reconnect? This will cause an enormous peak in the offline detection logic. Both the backing-storage and the compute host need to be able to deal with this kind of peaks. When the detection logic get's overwhelmed by a peak of messages or because it was offline during an update, it needs to deal with this 'delayed-processing' as well.
 
-### Devicetype specific behaviour
+### Devicetype specific behavior
 
 Not every device is the same, especially if the backend has to work for devices from different manufacturers. The timeout has to be different per device. 
 
@@ -43,18 +47,21 @@ Let quickly summarize the requirements:
 - Serverless infrastructure (scalable, no infra-burden, cost effective)
 - High throughput (>1000 messages per second)
 - As less IO as possible
-- Push meganism for device state changes
-- Pull meganism for current state of device
+- Push mechanism for device state changes
+- Pull mechanism for current state of device
 
 ## Durable Entities to the rescue!
 
 A solution to this challenge is to use Azure Durable Functions. Durable Functions are an extension of Azure Functions that lets you write stateful functions in a serverless environment. The extension manages state, checkpoints, and restarts for you. The rest of this post assumes basic understanding of [Durable Functions](https://docs.microsoft.com/en-us/azure/azure-functions/durable/durable-functions-overview).
 
-[Durable Entities](https://docs.microsoft.com/nl-nl/azure/azure-functions/durable/durable-functions-preview#entity-functions) is the newest addition to the Durable Functions framework (2.0 and upwards) and enables you to work with small pieces of state. This feature is heavily inspired by the Actor Model which you might know from [Akka.net](https://getakka.net/articles/intro/what-problems-does-actor-model-solve.html), [project Orleans](https://www.microsoft.com/en-us/research/project/orleans-virtual-actors/) or [Service Fabric Reliable Actors](https://docs.microsoft.com/en-us/azure/service-fabric/service-fabric-reliable-actors-introduction). 
+[Durable Entities](https://docs.microsoft.com/en-us/azure/azure-functions/durable/durable-functions-entities) is the newest addition to the Durable Functions framework (2.0 and upwards) and enables you to work with small pieces of state. This feature is heavily inspired by the Actor Model which you might know from [Akka.net](https://getakka.net/articles/intro/what-problems-does-actor-model-solve.html), [project Orleans](https://www.microsoft.com/en-us/research/project/orleans-virtual-actors/) or [Service Fabric Reliable Actors](https://docs.microsoft.com/en-us/azure/service-fabric/service-fabric-reliable-actors-introduction). 
 
 This implementation for our device offline detection can be visualized in a sequence diagram like this:
 
-<a id="single_image" href="/img/2019/sequenceUpdated.png" class="fancybox" rel="seq"><img src="/img/2019/sequenceUpdated-thumb.png" style="border:1px solid black;"/></a> 
+<a id="single_image" href="/img/2019/sequenceUpdated.png" class="fancybox" rel="seq"><img src="/img/2019/sequenceUpdated-thumb.png" style="border:1px solid black;"/></a>
+<!--
+<a id="single_image" href="https://raw.githubusercontent.com/keesschollaart81/case.schollaart.net/master/img/2019/sequenceUpdated.png"><img src="https://raw.githubusercontent.com/keesschollaart81/case.schollaart.net/master/img/2019/sequenceUpdated-thumb.png" style="border:1px solid black;"/></a>
+--> 
 
 ### The Client Function
 
@@ -129,7 +136,7 @@ public class DeviceEntity
 
 Durable Frameworks needs an entry point to construct the entity, this static method is decorated with the `[FunctionName(...)]` attribute and takes a `IDurableEntityContext` as an argument. In this operation the class based entity needs to be instantiated via the `DispatchAsync()` method. An initial state can be provisioned with the `SetState()` operation.
 
-The values of properties on the object will be automatically serialized to the state of the object after working with them. So if a Client Function calls the `MessageReceived()` method, the `DeviceEntity` is autmatically instantiated and in the body of `MessageReceived()` the properties of the object are recovered (from the persistent state). So properties like `this.LastCommunicationDateTime` can be updated and then, when `MessageReceived()` returns, Durable Functions will persist the state before it executes a new operation for this specific entity.
+The values of properties on the object will be automatically serialized to the state of the object after working with them. So if a Client Function calls the `MessageReceived()` method, the `DeviceEntity` is automatically instantiated and in the body of `MessageReceived()` the properties of the object are recovered (from the persistent state). So properties like `this.LastCommunicationDateTime` can be updated and then, when `MessageReceived()` returns, Durable Functions will persist the state before it executes a new operation for this specific entity.
 
 ### Entities and Dependencies
 
@@ -201,7 +208,9 @@ public async Task MessageReceived()
 
 When a device turns offline, there will be no message in the 'OfflineAfter' time period causing the message to be released from the TimeoutQueue. This will trigger another normal client function (`HandleOfflineMessage`) which will invoke the `DeviceTimeout()` method on our DeviceEntity.
 
-### Read and use the state
+> In the next release of Durable Functions (2.1) it will be possible create 'entity reminders'. With [this feature](https://github.com/Azure/azure-functions-durable-extension/issues/716) it's possible to let an entity signal itself on a given schedule. This could potentially eliminate the need of this timeout queue and simplify the implementation of this offline detection even more.   
+
+### Read the state
 
 Now that we have ve seen how to track and push out status changes, let's look at how can we implement an endpoint that allows for systems to get the current state of a device.
 
@@ -224,7 +233,7 @@ public static async Task<IActionResult> GetStatus(
 
 ### Status Changes & Dashboard
 
-The DeviceEntity is responsible to publish status changes, there are a dozen ways one can do that, for this demo I chose Azure SignalR Service. It's really easy to publish messages to SignalR using the output bindings. I also expose the negotiate endpoint that SignalR clients neeed in my Azure Functions app. This way, my entire app can run self contained within serverless infrastructure.
+The DeviceEntity is responsible to publish status changes, there are a dozen ways one can do that, for this demo I chose Azure SignalR Service. It's really easy to publish messages to SignalR using the output bindings. I also expose the negotiate endpoint that SignalR clients need in my Azure Functions app. This way, my entire app can run self contained within serverless infrastructure.
 
 ~~~cs
 private async Task ReportState(string state)
@@ -237,14 +246,12 @@ private async Task ReportState(string state)
 }
 ~~~
 
-To test this Device Offline Detection meganism, I've build a very simple dashboard. The dashboard uses the SignalR client side SDK to connect to the negotiate endpoint in Azure Functions which will 'redirect' it to Azure SignalR Service. Then with some javascript the device status changes are visualised...
+To test this Device Offline Detection meganism, I've build a very simple dashboard. The dashboard uses the SignalR client side SDK to connect to the negotiate endpoint in Azure Functions which will 'redirect' it to Azure SignalR Service. Then with some javascript the device status changes are visualized...
 
-<a id="single_image" href="/img/2019/dashboard.gif" class="fancybox" rel="loadtest" ><img src="/img/2019/dashboard_still.png"/></a> 
-
-### Timers
-
-//todo reference the upcoming timers
-  
+<a href="/img/2019/dashboard.gif" class="fancybox" rel="dashboard" ><img src="/img/2019/dashboard_still.png"/></a> 
+<!--
+<a  href="https://raw.githubusercontent.com/keesschollaart81/case.schollaart.net/master/img/2019/dashboard.gif" ><img src="https://raw.githubusercontent.com/keesschollaart81/case.schollaart.net/master/img/2019/dashboard_still.png"/></a> 
+-->
 ### What does this enable?
 
 So... we have offline detection and the LastCommunication DateTime in the Azure Functions Durable Entity state, now what?
@@ -257,18 +264,32 @@ So... we have offline detection and the LastCommunication DateTime in the Azure 
 
 ## Performance
 
-As this blogpost started with some requirements on performance I wanted to see how far we can stretch Durable Entities. To test this, I ran a simple loadtest using a TestDevice (just a Console App) that puts messages in a queue. 
+As this blogpost started with some requirements on performance I wanted to see how far we can stretch Durable Entities. To test this, I ran a simple loadtest using a [TestDevice](https://github.com/keesschollaart81/ServerlessDeviceOfflineDetection/blob/dev/src/TestDevice/Program.cs) (just a Console App) that puts messages in a queue. 
+
+I stopped the tests before everything melted. In the background, I monitored the internal queues of Durable Functions and I stopped the load test when I noticed that the workers were not able to keep the queues empty any more (>1000 messages in the queue). 
+
+Below some screenshots I took from Azure Monitor showing the number of requests that Azure Functions processed. 
+
+<a  href="/img/2019/loadtest3.png" class="fancybox" rel="loadtest" title="Load Test with normal Consumption plan. Purple offline messages at the end."><img src="/img/2019/loadtest3-thumb.png"/></a> 
+<a  href="/img/2019/loadtest4.png" class="fancybox" rel="loadtest" title="Second load test on Premium Consumption plan"><img src="/img/2019/loadtest4-thumb.png"/></a> 
+<a  href="/img/2019/loadtest5.png" class="fancybox" rel="loadtest" title="Second load test on Premium Consumption plan scaling to ~18 nodes"><img src="/img/2019/loadtest5-thumb.png"/></a> 
 
 A normal Azure Functions Consumption plan was able to process 300 messages per second. I also did a testrun with an Azure Functions Premium Consumption plan with the mid-sized ES2 SKU. This run (screenshot 2 and 3) was able to process ~1250 messages per second. 
 
-<a id="single_image" href="/img/2019/loadtest3.png" class="fancybox" rel="loadtest" title="Load Test with normal Consumption plan. Purple offline messages at the end."><img src="/img/2019/loadtest3-thumb.png"/></a> 
-<a id="single_image" href="/img/2019/loadtest4.png" class="fancybox" rel="loadtest" title="Second load test on Premium Consumption plan"><img src="/img/2019/loadtest4-thumb.png"/></a> 
-<a id="single_image" href="/img/2019/loadtest5.png" class="fancybox" rel="loadtest" title="Second load test on Premium Consumption plan scaling to ~18 nodes"><img src="/img/2019/loadtest5-thumb.png"/></a> 
+<!--
+<a href="https://raw.githubusercontent.com/keesschollaart81/case.schollaart.net/master/img/2019/loadtest3.png" title="Load Test with normal Consumption plan. Purple offline messages at the end."><img src="https://raw.githubusercontent.com/keesschollaart81/case.schollaart.net/master/img/2019/loadtest3-thumb.png"/></a> 
+<a href="https://raw.githubusercontent.com/keesschollaart81/case.schollaart.net/master/img/2019/loadtest4.png"  title="Second load test on Premium Consumption plan"><img src="https://raw.githubusercontent.com/keesschollaart81/case.schollaart.net/master/img/2019/loadtest4-thumb.png"/></a> 
+<a  href="https://raw.githubusercontent.com/keesschollaart81/case.schollaart.net/master/img/2019/loadtest5.png"  title="Second load test on Premium Consumption plan scaling to ~18 nodes"><img src="https://raw.githubusercontent.com/keesschollaart81/case.schollaart.net/master/img/2019/loadtest5-thumb.png"/></a> 
+-->
 
-I stopped both tests before everything melted. In the background, I monitored the internal queues of Durable Functions and I stopped the load test when I noticed that the workers were not able to keep the queues empty any more (>1000 messages in the queue). 
 
 ## Conclusion
 
-I think Durable Entities is quite a powerful construct and enables a lot of advanced distributed statefull scenario's in a very scalable and cost effective way. 
+I think Durable Entities is quite a powerful construct and enables a lot of advanced distributed stateful scenario's in a very scalable and cost effective way. 
 
 The code for this PoC can be found on [GitHub](https://github.com/keesschollaart81/ServerlessDeviceOfflineDetection/). The readme of this repository contains all the information needed to run this example yourself as it contains both the [Azure Pipelines YAML definition](https://github.com/keesschollaart81/ServerlessDeviceOfflineDetection/blob/dev/azure-pipelines.yaml) as well the [ARM template](https://github.com/keesschollaart81/ServerlessDeviceOfflineDetection/blob/dev/src/AzureResourceGroup/azuredeploy.json) to provision the Azure infrastructure. 
+
+
+<!--
+{% github keesschollaart81/ServerlessDeviceOfflineDetection no-readme %}
+-->
