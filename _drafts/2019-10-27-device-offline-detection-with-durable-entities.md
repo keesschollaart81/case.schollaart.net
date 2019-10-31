@@ -203,7 +203,24 @@ When a device turns offline, there will be no message in the 'OfflineAfter' time
 
 ### Read and use the state
 
-//todo client function to retrieve state
+Now that we have ve seen how to track and push out status changes, let's look at how can we implement an endpoint that allows for systems to get the current state of a device.
+
+For this I've build another Client Function based on a HTTP trigger. This `GetStatus` function will return the state for a specific device. 
+
+To get the state of an entity we need the `IDurableEntityClient` again. In the previous Client Function we used the `SignalEntityAsync`, this time we will use  `ReadEntityStateAsync`. `ReadEntityStateAsync` can be used to read the state of an entity. Other than `SignalEntityAsync`, `ReadEntityStateAsync` will go to storage to get the data and directly return it. 
+
+~~~cs
+[FunctionName(nameof(GetStatus))]
+public static async Task<IActionResult> GetStatus(
+    [HttpTrigger(AuthorizationLevel.Anonymous, "get")] HttpTriggerArgs args,
+    [DurableClient] IDurableEntityClient durableEntityClient)
+{
+    var entity = new EntityId(nameof(DeviceEntity), args.DeviceId);
+    var device = await durableEntityClient.ReadEntityStateAsync<DeviceEntity>(entity);
+
+    return new OkObjectResult(device);
+} 
+~~~
 
 ### Status Changes & Dashboard
 
