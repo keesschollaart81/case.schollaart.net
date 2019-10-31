@@ -252,6 +252,7 @@ To test this Device Offline Detection meganism, I've build a very simple dashboa
 <!--
 <a  href="https://raw.githubusercontent.com/keesschollaart81/case.schollaart.net/master/img/2019/dashboard.gif" ><img src="https://raw.githubusercontent.com/keesschollaart81/case.schollaart.net/master/img/2019/dashboard_still.png"/></a> 
 -->
+
 ### What does this enable?
 
 So... we have offline detection and the LastCommunication DateTime in the Azure Functions Durable Entity state, now what?
