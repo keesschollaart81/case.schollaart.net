@@ -289,7 +289,3 @@ I think Durable Entities is quite a powerful construct and enables a lot of adva
 
 The code for this PoC can be found on [GitHub](https://github.com/keesschollaart81/ServerlessDeviceOfflineDetection/). The readme of this repository contains all the information needed to run this example yourself as it contains both the [Azure Pipelines YAML definition](https://github.com/keesschollaart81/ServerlessDeviceOfflineDetection/blob/dev/azure-pipelines.yaml) as well the [ARM template](https://github.com/keesschollaart81/ServerlessDeviceOfflineDetection/blob/dev/src/AzureResourceGroup/azuredeploy.json) to provision the Azure infrastructure. 
 
-
-<!--
-{% github keesschollaart81/ServerlessDeviceOfflineDetection no-readme %}
--->
