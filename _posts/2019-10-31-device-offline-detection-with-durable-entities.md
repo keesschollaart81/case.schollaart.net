@@ -271,14 +271,16 @@ I stopped the tests before everything melted. In the background, I monitored the
 
 Below some screenshots I took from Azure Monitor showing the number of requests that Azure Functions processed. 
 
-<a  href="/img/2019/loadtest3.png" class="fancybox" rel="loadtest" title="Load Test with normal Consumption plan. Purple offline messages at the end."><img src="/img/2019/loadtest3-thumb.png"/></a> 
-<a  href="/img/2019/loadtest4.png" class="fancybox" rel="loadtest" title="Second load test on Premium Consumption plan"><img src="/img/2019/loadtest4-thumb.png"/></a> 
-<a  href="/img/2019/loadtest5.png" class="fancybox" rel="loadtest" title="Second load test on Premium Consumption plan scaling to ~18 nodes"><img src="/img/2019/loadtest5-thumb.png"/></a> 
+<a href="/img/2019/loadtest3.png" class="fancybox" rel="loadtest" title="Load Test with normal Consumption plan. Purple offline messages at the end."><img src="/img/2019/loadtest3-thumb.png"/></a> 
+<a href="/img/2019/loadtest4.png" class="fancybox" rel="loadtest" title="Second load test on Premium Consumption plan"><img src="/img/2019/loadtest4-thumb.png"/></a> 
+<a href="/img/2019/loadtest5.png" class="fancybox" rel="loadtest" title="Second load test on Premium Consumption plan scaling to ~18 nodes"><img src="/img/2019/loadtest5-thumb.png"/></a> 
 
 <!--
-<a href="https://raw.githubusercontent.com/keesschollaart81/case.schollaart.net/master/img/2019/loadtest3.png" title="Load Test with normal Consumption plan. Purple offline messages at the end."><img src="https://raw.githubusercontent.com/keesschollaart81/case.schollaart.net/master/img/2019/loadtest3-thumb.png"/></a> 
-<a href="https://raw.githubusercontent.com/keesschollaart81/case.schollaart.net/master/img/2019/loadtest4.png"  title="Second load test on Premium Consumption plan"><img src="https://raw.githubusercontent.com/keesschollaart81/case.schollaart.net/master/img/2019/loadtest4-thumb.png"/></a> 
-<a  href="https://raw.githubusercontent.com/keesschollaart81/case.schollaart.net/master/img/2019/loadtest5.png"  title="Second load test on Premium Consumption plan scaling to ~18 nodes"><img src="https://raw.githubusercontent.com/keesschollaart81/case.schollaart.net/master/img/2019/loadtest5-thumb.png"/></a> 
+<a href="https://raw.githubusercontent.com/keesschollaart81/case.schollaart.net/master/img/2019/loadtest3.png" title="Load Test with normal Consumption plan. Purple offline messages at the end."><img src="https://raw.githubusercontent.com/keesschollaart81/case.schollaart.net/master/img/2019/loadtest3-thumbb.png"/></a> 
+
+<a href="https://raw.githubusercontent.com/keesschollaart81/case.schollaart.net/master/img/2019/loadtest4.png"  title="Second load test on Premium Consumption plan"><img src="https://raw.githubusercontent.com/keesschollaart81/case.schollaart.net/master/img/2019/loadtest4-thumbb.png"/></a> 
+
+<a  href="https://raw.githubusercontent.com/keesschollaart81/case.schollaart.net/master/img/2019/loadtest5.png"  title="Second load test on Premium Consumption plan scaling to ~18 nodes"><img src="https://raw.githubusercontent.com/keesschollaart81/case.schollaart.net/master/img/2019/loadtest5-thumbb.png"/></a> 
 -->
 
 A normal Azure Functions Consumption plan was able to process 300 messages per second. I also did a testrun with an Azure Functions Premium Consumption plan with the mid-sized ES2 SKU. This run (screenshot 2 and 3) was able to process ~1250 messages per second. 
