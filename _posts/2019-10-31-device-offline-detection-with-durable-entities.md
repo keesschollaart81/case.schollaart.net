@@ -26,7 +26,7 @@ Detecting offline devices might sound quite trivial, but if you continue to add 
 
 ### No message is no trigger
 
-Some time, after the last received message, we want to run code that triggers the offine-event. A trigger needs to start code after some time, we don't want to manage all the timers/threads for all these devices. 
+Some time, after the last received message, we want to run code that triggers the offline-event. A trigger needs to start code after some time, we don't want to manage all the timers/threads for all these devices. 
 
 ### Distributed state
 
@@ -248,9 +248,9 @@ private async Task ReportState(string state)
 
 To test this Device Offline Detection meganism, I've build a very simple dashboard. The dashboard uses the SignalR client side SDK to connect to the negotiate endpoint in Azure Functions which will 'redirect' it to Azure SignalR Service. Then with some javascript the device status changes are visualized...
 
-<a href="/img/2019/dashboard.gif" class="fancybox" rel="dashboard" ><img src="/img/2019/dashboard_still.png"/></a> 
+<a href="/img/2019/dashboard.gif" class="fancybox" rel="dashboard" ><img src="/img/2019/dashboard_thumb.gif"/></a> 
 <!--
-<a  href="https://raw.githubusercontent.com/keesschollaart81/case.schollaart.net/master/img/2019/dashboard.gif" ><img src="https://raw.githubusercontent.com/keesschollaart81/case.schollaart.net/master/img/2019/dashboard_still.png"/></a> 
+<a  href="https://raw.githubusercontent.com/keesschollaart81/case.schollaart.net/master/img/2019/dashboard.gif" ><img src="https://raw.githubusercontent.com/keesschollaart81/case.schollaart.net/master/img/2019/dashboard_thumb.gif"/></a> 
 -->
 
 ### What does this enable?
@@ -265,7 +265,7 @@ So... we have offline detection and the LastCommunication DateTime in the Azure 
 
 ## Performance
 
-As this blogpost started with some requirements on performance I wanted to see how far we can stretch Durable Entities. To test this, I ran a simple loadtest using a [TestDevice](https://github.com/keesschollaart81/ServerlessDeviceOfflineDetection/blob/dev/src/TestDevice/Program.cs) (just a Console App) that puts messages in a queue. 
+As this blogpost started with some requirements on performance I wanted to see how far we can stretch Durable Entities. To test this, I ran a simple loadtest using a [TestDevice](https://github.com/keesschollaart81/ServerlessDeviceOfflineDetection/blob/master/src/TestDevice/Program.cs) (just a Console App) that puts messages in a queue. 
 
 I stopped the tests before everything melted. In the background, I monitored the internal queues of Durable Functions and I stopped the load test when I noticed that the workers were not able to keep the queues empty any more (>1000 messages in the queue). 
 
@@ -287,4 +287,4 @@ A normal Azure Functions Consumption plan was able to process 300 messages per s
 
 I think Durable Entities is quite a powerful construct and enables a lot of advanced distributed stateful scenario's in a very scalable and cost effective way. 
 
-The code for this PoC can be found on [GitHub](https://github.com/keesschollaart81/ServerlessDeviceOfflineDetection/). The readme of this repository contains all the information needed to run this example yourself as it contains both the [Azure Pipelines YAML definition](https://github.com/keesschollaart81/ServerlessDeviceOfflineDetection/blob/dev/azure-pipelines.yaml) as well the [ARM template](https://github.com/keesschollaart81/ServerlessDeviceOfflineDetection/blob/dev/src/AzureResourceGroup/azuredeploy.json) to provision the Azure infrastructure. 
+The code for this PoC can be found on [GitHub](https://github.com/keesschollaart81/ServerlessDeviceOfflineDetection/). The readme of this repository contains all the information needed to run this example yourself as it contains both the [Azure Pipelines YAML definition](https://github.com/keesschollaart81/ServerlessDeviceOfflineDetection/blob/master/azure-pipelines.yaml) as well the [ARM template](https://github.com/keesschollaart81/ServerlessDeviceOfflineDetection/blob/master/azuredeploy.json) to provision the Azure infrastructure. 
