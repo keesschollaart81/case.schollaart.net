@@ -249,7 +249,7 @@ private async Task ReportState(string state)
 
 To test this Device Offline Detection mechanism, I've build a very simple dashboard. The dashboard uses the SignalR client side SDK to connect to the negotiate endpoint in Azure Functions which will 'redirect' it to Azure SignalR Service. Then with some javascript the device status changes are visualized...
 
-<a href="/img/2019/dashboard.gif" class="fancybox" rel="dashboard" ><img src="/img/2019/dashboard_thumb.gif"/></a> 
+<a href="/img/2019/dashboard.gif?1" class="fancybox" rel="dashboard" ><img src="/img/2019/dashboard_thumb.gif?1"/></a> 
 <!--
 <a  href="https://raw.githubusercontent.com/keesschollaart81/case.schollaart.net/master/img/2019/dashboard.gif" ><img src="https://raw.githubusercontent.com/keesschollaart81/case.schollaart.net/master/img/2019/dashboard_thumb.gif"/></a> 
 -->
