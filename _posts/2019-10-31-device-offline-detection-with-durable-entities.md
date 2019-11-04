@@ -22,7 +22,7 @@ This post describes one way of building this Offline Detection capability, in a 
  
 ##  The Challenges
 
-Detecting offline devices might sound quite trivial, but if you continue to add zero's to the requirements it becomes more and more complex. This blogpost assumes 1.000.000 connected devices that emit 1 message every 10 minutes (±1.600 p/s) via Azure EventGrid, Azure EventHub, IoT-Hub or an Azure Storage Queue. With these numbers, you start to run into challenges, for example...
+Detecting offline devices might sound quite trivial, but if you continue to add zero's to the requirements it becomes more and more complex. This blogpost assumes 1.000.000 connected devices that emit 1 message every 10 minutes (that is ±1.600 per second) via Azure EventGrid, Azure Event Hubs, Azure IoT Hub or an Azure Queue Storage. With these numbers, you start to run into challenges, for example...
 
 ### No message is no trigger
 
@@ -65,7 +65,7 @@ This implementation for our device offline detection can be visualized in a sequ
 
 ### The Client Function
 
-Similar to Orchestrators, Durable Entities cannot be reached directly via a normal trigger binding, to work with Entities we need a 'Client Function'. A 'Client Function' is a normal Azure Functions that can be triggered by anything and can interact with Entities. Below an example Client Function, this Client Function will be triggered for every device message and interacts with our Durable Entity:
+Similar to Orchestrators, Durable Entities cannot be reached directly via a normal trigger binding, to work with Entities we need a 'Client Function'. A 'Client Function' is a normal Azure Functions that can be triggered by anything and can interact with Entities. Below an example Client Function, this Client Function will be triggered via a queue for every device message and interacts with our Durable Entity:
 
 ~~~ cs
 [FunctionName(nameof(QueueTrigger))]
@@ -81,9 +81,9 @@ public async Task QueueTrigger(
 }
 ~~~
 
-The Client Function takes a dependency on `IDurableEntityClient` which will be injected by the Durablable Framework. This `durableEntityClient` can be used both to read the state of an Entity with `ReadEntityStateAsync()` and to invoke a method on an Entity with `SignalEntityAsync()`. When working with entities, an EntityId is always needed. This Id uniquely identifies the instance and state of an entity by it's name and Id, in our example the 'DeviceEntity' and the Id of the device.  
+The Client Function takes a dependency on `IDurableEntityClient` which will be injected by the Durable Framework. This `durableEntityClient` can be used both to read the state of an Entity with `ReadEntityStateAsync()` and to invoke a method on an Entity with `SignalEntityAsync()`. When working with entities, an EntityId is always needed. This Id uniquely identifies the instance and state of an entity by its name and Id, in our example the 'DeviceEntity' and the Id of the device.  
 
-In the 'Client Function' from the example below, the DeviceId is read from the queue message to construct the EntityId. Then the `SignalEntityAsync()` is called with 2 arguments, first the DeviceId (and the name of the entity) and the secondly the name of the method that we want to invoke (`MessageReceived`).
+In the 'Client Function' from the example above, the DeviceId is read from the queue message to construct the EntityId. Then the `SignalEntityAsync()` is called with 2 arguments, first the DeviceId (and the name of the entity) and the secondly the name of the method that we want to invoke (`MessageReceived`).
 
 Although there is an await statement, `SignalEntityAsync()` is a 'fire and forget' operation as the actual method invocation on the entity will happen later. There is an await statement because of the IO it takes to persist the operation to an internal queue. So the Client Function completes very quickly and the Durable Framework will asynchronously instantiate the Entity and invoke the `MessageReceived` method.
 
@@ -119,6 +119,7 @@ public class DeviceEntity
     {
         if (context.IsNewlyConstructed)
         {
+            // setting the initial state is optional
             context.SetState(new DeviceEntity(context.EntityKey, logger));
         }
 
@@ -208,11 +209,11 @@ public async Task MessageReceived()
 
 When a device turns offline, there will be no message in the 'OfflineAfter' time period causing the message to be released from the TimeoutQueue. This will trigger another normal client function (`HandleOfflineMessage`) which will invoke the `DeviceTimeout()` method on our DeviceEntity.
 
-> In the next release of Durable Functions (2.1) it will be possible create 'entity reminders'. With [this feature](https://github.com/Azure/azure-functions-durable-extension/issues/716) it's possible to let an entity signal itself on a given schedule. This could potentially eliminate the need of this timeout queue and simplify the implementation of this offline detection even more.   
+> In a future release of Durable Functions (2.1) it will be to possible create 'entity reminders'. With [this feature](https://github.com/Azure/azure-functions-durable-extension/issues/716) it's possible to let an entity signal itself on a given schedule. This could potentially eliminate the need of this timeout queue and simplify the implementation of this offline detection even more.   
 
 ### Read the state
 
-Now that we have ve seen how to track and push out status changes, let's look at how can we implement an endpoint that allows for systems to get the current state of a device.
+Now that we have seen how to track and push out status changes, let's look at how can we implement an endpoint that allows for systems to get the current state of a device.
 
 For this I've build another Client Function based on a HTTP trigger. This `GetStatus` function will return the state for a specific device. 
 
@@ -246,7 +247,7 @@ private async Task ReportState(string state)
 }
 ~~~
 
-To test this Device Offline Detection meganism, I've build a very simple dashboard. The dashboard uses the SignalR client side SDK to connect to the negotiate endpoint in Azure Functions which will 'redirect' it to Azure SignalR Service. Then with some javascript the device status changes are visualized...
+To test this Device Offline Detection mechanism, I've build a very simple dashboard. The dashboard uses the SignalR client side SDK to connect to the negotiate endpoint in Azure Functions which will 'redirect' it to Azure SignalR Service. Then with some javascript the device status changes are visualized...
 
 <a href="/img/2019/dashboard.gif" class="fancybox" rel="dashboard" ><img src="/img/2019/dashboard_thumb.gif"/></a> 
 <!--
@@ -259,8 +260,8 @@ So... we have offline detection and the LastCommunication DateTime in the Azure 
 
 - We can push out a message on state changes (no polling required)
 - We can expose an HTTP Trigger based Function to return the LastCommunication DateTime
-- We only depend on Azure Storage which can take up to 20.000 request/sec and is low in cost
-- No reserved capacity for VM's, containers, CosmosDb... No messages == No cost!
+- We only depend on Azure Storage which can take up to 20000 request/sec and is low in cost
+- No reserved capacity for VM's, containers, Azure Cosmos DB... No messages == No cost!
 - No plumbing-code for triggers, distributed state, scaling and resiliency thanks to Azure (Durable) Functions!
 
 ## Performance
@@ -284,6 +285,8 @@ Below some screenshots I took from Azure Monitor showing the number of requests 
 -->
 
 A normal Azure Functions Consumption plan was able to process 300 messages per second. I also did a testrun with an Azure Functions Premium Consumption plan with the mid-sized ES2 SKU. This run (screenshot 2 and 3) was able to process ~1250 messages per second. 
+
+In these test cases, these 'messages' are messages coming from 10000 devices (3000 devices for the first test), processed by the 'Client Function', ingested via an Azure Storage Queue. Azure Functions had to do more 'executions' than these ~1250 messages per second, because after getting the message it has to 'recover' the entity, send messages to Azure SignalR Service, etc. So this number is end-to-end. With the highest load, a total of ~4000 Azure Functions operations per second were logged.
 
 ## Conclusion
 
