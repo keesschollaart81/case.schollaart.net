@@ -22,7 +22,7 @@ This post describes one way of building this Offline Detection capability, in a 
  
 ##  The Challenges
 
-Detecting offline devices might sound quite trivial, but if you continue to add zero's to the requirements it becomes more and more complex. This blogpost assumes 1.000.000 connected devices that emit 1 message every 10 minutes (that is ±1.600 per second) via Azure EventGrid, Azure Event Hubs, Azure IoT Hub or an Azure Queue Storage. With these numbers, you start to run into challenges, for example...
+Detecting offline devices might sound quite trivial, but if you continue to add zero's to the requirements it becomes more and more complex. This blogpost assumes 1.000.000 connected devices that emit 1 message every 10 minutes (that is ±1.600 per second) via Azure EventGrid, Azure Event Hubs, Azure IoT Hub or an Azure Queue Storage. With these numbers you start to run into challenges. For example...
 
 ### No message is no trigger
 
@@ -81,9 +81,9 @@ public async Task QueueTrigger(
 }
 ~~~
 
-The Client Function takes a dependency on `IDurableEntityClient` which will be injected by the Durable Framework. This `durableEntityClient` can be used both to read the state of an Entity with `ReadEntityStateAsync()` and to invoke a method on an Entity with `SignalEntityAsync()`. When working with entities, an EntityId is always needed. This Id uniquely identifies the instance and state of an entity by its name and Id, in our example the 'DeviceEntity' and the Id of the device.  
+The Client Function takes a dependency on `IDurableEntityClient` which will be injected by the Durable Framework. This `durableEntityClient` can be used both to read the state of an Entity with `ReadEntityStateAsync()` and to invoke a method on an Entity with `SignalEntityAsync()`. When working with entities, an EntityId is always needed. This Id uniquely identifies the instance and state of an entity by its name and Id. In the code above the name of our entity ('DeviceEntity') and the provide Id of the device.  
 
-In the 'Client Function' from the example above, the DeviceId is read from the queue message to construct the EntityId. Then the `SignalEntityAsync()` is called with 2 arguments, first the DeviceId (and the name of the entity) and the secondly the name of the method that we want to invoke (`MessageReceived`).
+In the 'Client Function' from the example above, the DeviceId is read from the queue message to construct the EntityId. Then the `SignalEntityAsync()` is called with 2 arguments, first the EntityId (and the name of the entity) and secondly the name of the method that we want to invoke (`MessageReceived`).
 
 Although there is an await statement, `SignalEntityAsync()` is a 'fire and forget' operation as the actual method invocation on the entity will happen later. There is an await statement because of the IO it takes to persist the operation to an internal queue. So the Client Function completes very quickly and the Durable Framework will asynchronously instantiate the Entity and invoke the `MessageReceived` method.
 
