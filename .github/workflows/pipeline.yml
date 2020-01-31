@@ -34,7 +34,7 @@ jobs:
         az group deployment create -n ghaction -g ${{ env.AZURE_GROUP_NAME }} --template-file azuredeploy.json
       
         az storage container create --account-name "${{ env.WEB_ACCOUNT_NAME }}" -n "\$web"
-        az storage blob upload-batch -d "\$web" --account-name "${{ env.WEB_ACCOUNT_NAME }}" -s "/srv/jekyll/_site" 
+        az storage blob upload-batch -d "\$web" --account-name "${{ env.WEB_ACCOUNT_NAME }}" -s "_site" 
         az storage blob service-properties update --account-name "${{ env.WEB_ACCOUNT_NAME }}" --static-website --index-document index.html --404-document index.html
         
         az cdn custom-domain enable-https --endpoint-name ${{ env.CDN_PROFILE_ENDPOINT_NAME }} --name ${{ env.CDN_DOMAIN_NAME }} --profile-name ${{ env.CDN_PROFILE_NAME }} -g ${{ env.AZURE_GROUP_NAME }} || true
