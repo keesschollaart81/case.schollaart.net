@@ -27,5 +27,8 @@ jobs:
     
     - run: |
         az group create -n ${{ env.AZURE_GROUP_NAME }} -l westeurope 
-        az group deployment create -n ghaction -g ${{ env.AZURE_GROUP_NAME }} --template-file azuredepoy.json
+        az group deployment create -n ghaction -g ${{ env.AZURE_GROUP_NAME }} --template-file azuredeploy.json
       
+        az storage container create --account-name "CaseSchollaartNetWeb" -n "\$web"
+        az storage blob upload-batch -d "\$web" --account-name "CaseSchollaartNetWeb" -s "/srv/jekyll/_site" 
+        az storage blob service-properties update --account-name "CaseSchollaartNetWeb" --static-website --index-document index.html --404-document index.html
