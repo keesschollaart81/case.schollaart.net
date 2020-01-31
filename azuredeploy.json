@@ -8,7 +8,7 @@
         "CdnProfileEndpointName": "[concat(variables('prefix'),'CdnE')]",
         "CdnProfileName": "[concat(variables('prefix'),'Cdn')]",
         "CdnCustomDomainName": "[concat(variables('prefix'),'CdnD')]",
-        "hostname": "casetest.schollaart.net"
+        "hostname": "case.schollaart.net"
     },
     "resources": [
         {
