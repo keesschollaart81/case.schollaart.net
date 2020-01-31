@@ -39,4 +39,4 @@ jobs:
         
         az cdn custom-domain enable-https --endpoint-name ${{ env.CDN_PROFILE_ENDPOINT_NAME }} --name ${{ env.CDN_DOMAIN_NAME }} --profile-name ${{ env.CDN_PROFILE_NAME }} -g ${{ env.AZURE_GROUP_NAME }} || true
         az cdn endpoint purge -g ${{ env.AZURE_GROUP_NAME }} --profile-name ${{ env.CDN_PROFILE_NAME }} --content-paths '/*' --name ${{ env.CDN_PROFILE_ENDPOINT_NAME }}
-        
+      name: "Azure stuff"
