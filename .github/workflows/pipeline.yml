@@ -2,7 +2,10 @@ on:
   push:
     branches:
       - master
-      
+
+env: 
+  AZURE_GROUP_NAME: case.schollaart.net
+
 jobs:
   build-and-deploy:
     name: Build and Deploy
@@ -26,6 +29,6 @@ jobs:
       uses: Azure/cli@v1.0.0
       with: 
         inlineScript: 
-          az group create -n ${{ env.AZURE_GROUP_NAME }} -l eastus 
-          az group deployment create -n ghaction -g ${{ env.AZURE_GROUP_NAME }} --template-file deployment/azuredepoy.json --parameters myWebAppName=${{ env.AZURE_WEBAPP_NAME }}
+          az group create -n ${{ env.AZURE_GROUP_NAME }} -l westeurope 
+          az group deployment create -n ghaction -g ${{ env.AZURE_GROUP_NAME }} --template-file azuredepoy.json
        

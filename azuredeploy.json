@@ -1,0 +1,178 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {},
+    "variables": {
+        "prefix": "CaseSchollaartNet",
+        "webStorageAccountName": "[toLower(concat(variables('prefix'),'Web'))]",
+        "CdnProfileEndpointName": "[concat(variables('prefix'),'CdnE')]",
+        "CdnProfileName": "[concat(variables('prefix'),'Cdn')]",
+        "CdnCustomDomainName": "[concat(variables('prefix'),'CdnD')]",
+        "hostname": "casetest.schollaart.net"
+    },
+    "resources": [
+        {
+            "type": "Microsoft.Storage/storageAccounts",
+            "sku": {
+                "name": "Standard_LRS",
+                "tier": "Standard"
+            },
+            "kind": "StorageV2",
+            "name": "[variables('webStorageAccountName')]",
+            "apiVersion": "2018-07-01",
+            "location": "[resourceGroup().location]",
+            "properties": {},
+            "dependsOn": []
+        },
+        {
+            "apiVersion": "2019-04-15",
+            "type": "Microsoft.Cdn/profiles",
+            "name": "[variables('CdnProfileName')]",
+            "location": "[resourceGroup().location]",
+            "sku": {
+                "name": "Standard_Microsoft"
+            },
+            "properties": {},
+            "resources": [
+                {
+                    "apiVersion": "2019-04-15",
+                    "type": "endpoints",
+                    "name": "[variables('CdnProfileEndpointName')]",
+                    "location": "[resourceGroup().location]",
+                    "properties": {
+                        "isHttpAllowed": true,
+                        "isHttpsAllowed": true,
+                        "originHostHeader": "[concat(variables('webStorageAccountName'),'.z6.web.core.windows.net')]",
+                        "origins": [
+                            {
+                                "name": "origin1",
+                                "properties": {
+                                    "hostName": "[concat(variables('webStorageAccountName'),'.z6.web.core.windows.net')]"
+                                }
+                            }
+                        ],
+                        "isCompressionEnabled": true,
+                        "contentTypesToCompress": [
+                            "application/eot",
+                            "application/font",
+                            "application/font-sfnt",
+                            "application/javascript",
+                            "application/json",
+                            "application/opentype",
+                            "application/otf",
+                            "application/pkcs7-mime",
+                            "application/truetype",
+                            "application/ttf",
+                            "application/vnd.ms-fontobject",
+                            "application/xhtml+xml",
+                            "application/xml",
+                            "application/xml+rss",
+                            "application/x-font-opentype",
+                            "application/x-font-truetype",
+                            "application/x-font-ttf",
+                            "application/x-httpd-cgi",
+                            "application/x-javascript",
+                            "application/x-mpegurl",
+                            "application/x-opentype",
+                            "application/x-otf",
+                            "application/x-perl",
+                            "application/x-ttf",
+                            "font/eot",
+                            "font/ttf",
+                            "font/otf",
+                            "font/opentype",
+                            "image/svg+xml",
+                            "text/css",
+                            "text/csv",
+                            "text/html",
+                            "text/javascript",
+                            "text/js",
+                            "text/plain",
+                            "text/richtext",
+                            "text/tab-separated-values",
+                            "text/xml",
+                            "text/x-script",
+                            "text/x-component",
+                            "text/x-java-source"
+                        ],
+                        "deliveryPolicy": {
+                            "description": "string",
+                            "rules": [
+                                {
+                                    "name": "HttpToHttps",
+                                    "order": 1,
+                                    "conditions": [
+                                        {
+                                            "name": "RequestScheme",
+                                            "parameters": {
+                                                "@odata.type": "#Microsoft.Azure.Cdn.Models.DeliveryRuleRequestSchemeConditionParameters",
+                                                "operator": "Equal",
+                                                "negateCondition": false,
+                                                "matchValues": [
+                                                    "HTTP"
+                                                ]
+                                            }
+                                        }
+                                    ],
+                                    "actions": [
+                                        {
+                                            "name": "UrlRedirect",
+                                            "parameters": {
+                                                "@odata.type": "#Microsoft.Azure.Cdn.Models.DeliveryRuleUrlRedirectActionParameters",
+                                                "redirectType": "Found",
+                                                "destinationProtocol": "Https",
+                                                "customQueryString": null,
+                                                "customPath": null,
+                                                "customHostname": null,
+                                                "customFragment": null
+                                            }
+                                        }
+                                    ]
+                                }
+                            ]
+                        }
+                    },
+                    "dependsOn": [
+                        "[resourceId('Microsoft.Cdn/profiles/', variables('CdnProfileName'))]",
+                        "[resourceId('Microsoft.Storage/storageAccounts', variables('webStorageAccountName'))]"
+                    ],
+                    "resources": [
+                        {
+                            "name": "[variables('CdnCustomDomainName')]",
+                            "type": "customDomains",
+                            "apiVersion": "2019-04-15",
+                            "properties": {
+                                "hostName": "[variables('hostname')]"
+                            },
+                            "dependsOn": [
+                                "[resourceId('Microsoft.Cdn/profiles/endpoints',  variables('CdnProfileName'), variables('CdnProfileEndpointName'))]"
+                            ]
+                        }
+                    ]
+                }
+            ]
+        }
+    ],
+    "outputs": {
+        "webStorageAccountName": {
+            "type": "string",
+            "value": "[variables('webStorageAccountName')]"
+        },
+        "webStorageAccountKey": {
+            "type": "securestring",
+            "value": "[listKeys(resourceId('Microsoft.Storage/storageAccounts', variables('webStorageAccountName')), providers('Microsoft.Storage', 'storageAccounts').apiVersions[0]).keys[0].value]"
+        },
+        "CdnProfileEndpointName": {
+            "type": "string",
+            "value": "[variables('CdnProfileEndpointName')]"
+        },
+        "CdnProfileName": {
+            "type": "string",
+            "value": "[variables('CdnProfileName')]"
+        },
+        "CdnCustomDomainName": {
+            "type": "string",
+            "value": "[variables('CdnCustomDomainName')]"
+        }
+    }
+}
