@@ -1,0 +1,31 @@
+on:
+  push:
+    branches:
+      - master
+      
+jobs:
+  build-and-deploy:
+    name: Build and Deploy
+    runs-on: ubuntu-latest
+    steps:
+
+    - uses: actions/checkout@v2
+    
+    - name: Build the site in the jekyll/builder container
+      run: |
+        docker run \
+        -v ${{ github.workspace }}:/srv/jekyll -v ${{ github.workspace }}/_site:/srv/jekyll/_site \
+        jekyll/builder:latest /bin/bash -c "chmod 777 /srv/jekyll && jekyll build --future"
+    
+    - name: Azure Login
+      uses: Azure/login@v1
+      with:
+        creds: ${{ secrets.AZURE_CREDENTIALS }}
+    
+    - name: Azure CLI Action
+      uses: Azure/cli@v1.0.0
+      with: 
+        inlineScript: 
+          az group create -n ${{ env.AZURE_GROUP_NAME }} -l eastus 
+          az group deployment create -n ghaction -g ${{ env.AZURE_GROUP_NAME }} --template-file deployment/azuredepoy.json --parameters myWebAppName=${{ env.AZURE_WEBAPP_NAME }}
+       
