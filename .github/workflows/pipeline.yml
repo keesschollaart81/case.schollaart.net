@@ -5,7 +5,7 @@ on:
 
 env: 
   AZURE_GROUP_NAME: case.schollaart.net
-  WEB_ACCOUNT_NAME: CaseSchollaartNetWeb
+  WEB_ACCOUNT_NAME: caseschollaartnetweb
   CDN_DOMAIN_NAME: case.schollaart.net
   CDN_PROFILE_NAME: CaseSchollaartNetCdn
   CDN_PROFILE_ENDPOINT_NAME: CaseSchollaartNetCdnE
