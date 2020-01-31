@@ -5,6 +5,10 @@ on:
 
 env: 
   AZURE_GROUP_NAME: case.schollaart.net
+  WEB_ACCOUNT_NAME: CaseSchollaartNetWeb
+  CDN_DOMAIN_NAME: case.schollaart.net
+  CDN_PROFILE_NAME: CaseSchollaartNetCdn
+  CDN_PROFILE_ENDPOINT_NAME: CaseSchollaartNetCdnE
 
 jobs:
   build-and-deploy:
@@ -29,6 +33,10 @@ jobs:
         az group create -n ${{ env.AZURE_GROUP_NAME }} -l westeurope 
         az group deployment create -n ghaction -g ${{ env.AZURE_GROUP_NAME }} --template-file azuredeploy.json
       
-        az storage container create --account-name "CaseSchollaartNetWeb" -n "\$web"
-        az storage blob upload-batch -d "\$web" --account-name "CaseSchollaartNetWeb" -s "/srv/jekyll/_site" 
-        az storage blob service-properties update --account-name "CaseSchollaartNetWeb" --static-website --index-document index.html --404-document index.html
+        az storage container create --account-name "${{ env.WEB_ACCOUNT_NAME }}" -n "\$web"
+        az storage blob upload-batch -d "\$web" --account-name "${{ env.WEB_ACCOUNT_NAME }}" -s "/srv/jekyll/_site" 
+        az storage blob service-properties update --account-name "${{ env.WEB_ACCOUNT_NAME }}" --static-website --index-document index.html --404-document index.html
+        
+        az cdn custom-domain enable-https --endpoint-name ${{ env.CDN_PROFILE_ENDPOINT_NAME }} --name ${{ env.CDN_DOMAIN_NAME }} --profile-name ${{ env.CDN_PROFILE_NAME }} -g ${{ env.AZURE_GROUP_NAME }} || true
+        az cdn endpoint purge -g ${{ env.AZURE_GROUP_NAME }} --profile-name ${{ env.CDN_PROFILE_NAME }} --content-paths '/*' --name ${{ env.CDN_PROFILE_ENDPOINT_NAME }}
+        
