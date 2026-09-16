@@ -10,7 +10,8 @@
 .ruby-version
 .sass-cache
 /vendor
-Gemfile.lock
+vendor/bundle
+.jekyll-cache/
 bbin/
 coverage
 gh-pages/

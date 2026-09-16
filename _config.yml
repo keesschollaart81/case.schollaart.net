@@ -1,6 +1,15 @@
 paginate: 15
 excerpt_separator: <!--more-->
-gems:      ["jekyll-paginate", "kramdown", "jekyll-sitemap", "jekyll-feed"]  
-encoding: utf-8 
+plugins:   ["jekyll-paginate", "jekyll-sitemap", "jekyll-feed"]
+encoding: utf-8
 markdown: kramdown
-url: "http://case.schollaart.net"
+url: "https://case.schollaart.net"
+
+exclude:
+  - Gemfile
+  - Gemfile.lock
+  - README.md
+  - LICENSE
+  - azuredeploy.json
+  - vendor
+  - .jekyll-cache

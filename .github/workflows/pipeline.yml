@@ -1,42 +1,49 @@
+name: Build and deploy
+
 on:
   push:
     branches:
       - master
-
-env: 
-  AZURE_GROUP_NAME: case.schollaart.net
-  WEB_ACCOUNT_NAME: caseschollaartnetweb
-  CDN_DOMAIN_NAME: case.schollaart.net
-  CDN_PROFILE_NAME: CaseSchollaartNetCdn
-  CDN_PROFILE_ENDPOINT_NAME: CaseSchollaartNetCdnE
+  pull_request:
+    types: [opened, synchronize, reopened, closed]
+    branches:
+      - master
+  workflow_dispatch:
 
 jobs:
-  build-and-deploy:
+  build_and_deploy:
     name: Build and Deploy
+    if: github.event_name != 'pull_request' || github.event.action != 'closed'
     runs-on: ubuntu-latest
     steps:
+      - uses: actions/checkout@v4
 
-    - uses: actions/checkout@v2
-    
-    - name: Build the site in the jekyll/builder container
-      run: |
-        docker run \
-        -v ${{ github.workspace }}:/srv/jekyll -v ${{ github.workspace }}/_site:/srv/jekyll/_site \
-        jekyll/builder:latest /bin/bash -c "chmod 777 /srv/jekyll && jekyll build --future"
-    
-    - name: Azure Login
-      uses: Azure/login@v1
-      with:
-        creds: ${{ secrets.AZURE_CREDENTIALS }}
-    
-    - run: |
-        az group create -n ${{ env.AZURE_GROUP_NAME }} -l westeurope 
-        az group deployment create -n ghaction -g ${{ env.AZURE_GROUP_NAME }} --template-file azuredeploy.json
-      
-        az storage container create --account-name "${{ env.WEB_ACCOUNT_NAME }}" -n "\$web"
-        az storage blob upload-batch -d "\$web" --account-name "${{ env.WEB_ACCOUNT_NAME }}" -s "_site" 
-        az storage blob service-properties update --account-name "${{ env.WEB_ACCOUNT_NAME }}" --static-website --index-document index.html --404-document index.html
-        
-        az cdn custom-domain enable-https --endpoint-name "${{ env.CDN_PROFILE_ENDPOINT_NAME }}" --name "${{ env.CDN_DOMAIN_NAME }}" --profile-name "${{ env.CDN_PROFILE_NAME }}" -g ${{ env.AZURE_GROUP_NAME }} || true
-        az cdn endpoint purge -g ${{ env.AZURE_GROUP_NAME }} --profile-name "${{ env.CDN_PROFILE_NAME }}" --content-paths '/*' --name "${{ env.CDN_PROFILE_ENDPOINT_NAME }}"
-      name: "Azure stuff"
+      - name: Set up Ruby
+        uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: '3.3'
+          bundler-cache: true
+
+      - name: Build the site
+        run: bundle exec jekyll build --future
+
+      - name: Deploy to Azure Static Web Apps
+        uses: Azure/static-web-apps-deploy@v1
+        with:
+          azure_static_web_apps_api_token: ${{ secrets.AZURE_STATIC_WEB_APPS_API_TOKEN }}
+          repo_token: ${{ secrets.GITHUB_TOKEN }}
+          action: upload
+          app_location: "_site"
+          skip_app_build: true
+          skip_api_build: true
+
+  close_pull_request:
+    name: Close preview environment
+    if: github.event_name == 'pull_request' && github.event.action == 'closed'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Close preview environment
+        uses: Azure/static-web-apps-deploy@v1
+        with:
+          azure_static_web_apps_api_token: ${{ secrets.AZURE_STATIC_WEB_APPS_API_TOKEN }}
+          action: close
