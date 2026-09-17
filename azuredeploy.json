@@ -18,33 +18,18 @@
         },
         "deployCustomDomain": {
             "type": "bool",
-            "defaultValue": false,
+            "defaultValue": true,
             "metadata": {
-                "description": "Only set to true AFTER the CNAME for the hostname points at the Static Web App. Azure validates the domain during deployment, so enabling this too early fails the deployment."
+                "description": "Requires the hostname CNAME to point at the Static Web App, which Azure validates at deploy time. Set to false when bootstrapping into a new environment where DNS does not point here yet."
             }
         }
     },
     "variables": {
         "prefix": "CaseSchollaartNet",
-        "webStorageAccountName": "[toLower(concat(variables('prefix'),'Web'))]",
         "staticSiteName": "[variables('prefix')]",
         "hostname": "case.schollaart.net"
     },
     "resources": [
-        {
-            "type": "Microsoft.Storage/storageAccounts",
-            "apiVersion": "2023-01-01",
-            "name": "[variables('webStorageAccountName')]",
-            "location": "[resourceGroup().location]",
-            "sku": {
-                "name": "Standard_LRS"
-            },
-            "kind": "StorageV2",
-            "properties": {},
-            "metadata": {
-                "comments": "Retained from the original deployment. Properties are intentionally left empty so redeploying never mutates the live account. The blog is no longer served from this account's $web container; Static Web Apps hosts it now."
-            }
-        },
         {
             "type": "Microsoft.Web/staticSites",
             "apiVersion": "2023-01-01",
@@ -78,10 +63,6 @@
         }
     ],
     "outputs": {
-        "webStorageAccountName": {
-            "type": "string",
-            "value": "[variables('webStorageAccountName')]"
-        },
         "staticSiteName": {
             "type": "string",
             "value": "[variables('staticSiteName')]"
