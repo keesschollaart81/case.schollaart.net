@@ -1,10 +1,10 @@
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/2.1.4/jquery.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
 <script>window.jQuery || document.write('<script src="/scripts/jquery.min.js"><\/script>')</script>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-backstretch/2.0.4/jquery.backstretch.min.js"></script>
 <script>window.jQuery.backstretch || document.write('<script src="/scripts/jquery.backstretch.min.js"><\/script>')</script>
   
-<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.4.1/js/bootstrap.min.js"></script>
 <script>(typeof $().emulateTransitionEnd == 'function') || document.write('<script src="/scripts/bootstrap.min.js"><\/script>')</script>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.2.0/highlight.min.js"></script>
@@ -64,8 +64,15 @@
 
 		$.each( document.styleSheets, function(index, sheet) {
 			if(links[sheet.href]) {
-				var rules = sheet.rules ? sheet.rules : sheet.cssRules;
-				if (rules.length == 0) {
+				var rules;
+				try {
+					// Reading rules of a cross-origin stylesheet throws SecurityError.
+					// That only happens once the sheet actually loaded, so treat it as a success.
+					rules = sheet.rules ? sheet.rules : sheet.cssRules;
+				} catch (e) {
+					return;
+				}
+				if (rules && rules.length == 0) {
 					link = $(links[sheet.href]);
 					link.attr( 'href', link.attr("data-fallback") );
 				}
